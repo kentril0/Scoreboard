@@ -7,5 +7,5 @@ TODO
 Commandline arguments
 TODO 
 
-Command
+Commands
 TODO
