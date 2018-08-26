@@ -82,7 +82,7 @@ class Scoreboard
 	public:
 		// constructor
 		Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT, 
-					int m_players = PLIMIT, const std::string s_f = "",
+					int m_plyrs = PLIMIT, const std::string s_f = "",
 					const std::string s_hf = "");
 
 		void set_show_max(int num);
