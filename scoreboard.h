@@ -113,6 +113,9 @@ class Scoreboard
 		void print(std::ostream & strm = std::cout);
 
 		~Scoreboard();			// destructor
+	private:
+		bool score_cmp(const Player &a, const Player &b)
+			{ return a.score > b.score; }
 };
 
 #endif	// include SCOREBOARD_H

@@ -8,6 +8,7 @@
  */
 
 #include "scoreboard.h"
+#include <algorithm>
 
 
 /**
@@ -126,7 +127,7 @@ void Scoreboard::Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT,
  */
 inline void Scoreboard::set_show_max(int num)
 {
-	if (num < 0)
+	if (num < 0 || num > USHRT_MAX)
 		report_err("Incorrect number of maximum players shown");
 
 	show_max = num;
@@ -138,7 +139,7 @@ inline void Scoreboard::set_show_max(int num)
  */
 inline void Scoreboard::set_max_players(int num)
 {
-	if (num < 0)
+	if (num < 0 || num > USHRT_MAX)
 		report_err("Incorrect number of maximum players shown");
 
 	while (players.size() > num)	// remove players above limit
@@ -176,6 +177,9 @@ void Scoreboard::add_player(std::string name = "", int score = 0)
 	Player pl(pl_name, score);
 	p_names.insert(pl_name);
 	players.push_back(pl);
+
+	if (score)								// is not 0
+		std::sort(players.begin(), players.end(), score_cmp);
 }
 
 /**
