@@ -11,9 +11,10 @@
 #ifndef SCOREBOARD_H
 #define SCOREBOARD_H
 
-#include <vector>
 #include <iostream>
 #include <climits>
+#include <vector>
+#include <unordered_set>
 
 // debugging macro
 #ifndef DEBUG
@@ -31,7 +32,7 @@
 	} while(0)
 
 
-// hard limit for number of players - INT_MAX
+// hard limit for number of players - USHRT_MAX
 const int PLIMIT = UCHAR_MAX;	// soft player limit
 
 // show that many players defined by the height of the terminal
@@ -73,6 +74,7 @@ public:
 class Scoreboard
 {
 		std::vector<Player> players;///< Vector of players
+		std::unordered_set<std::string> p_names;	//< set of player names
 		int show_max;				///< How many players are shown
 		int max_players;			///< Max. players to save info about
 		std::ostream save_f;		///< Can be printed to a file
