@@ -34,10 +34,10 @@ inline std::string *Player::get_name() const
  */
 inline void Player::set_score(int num)
 {
-	if (num > MAX_SCORE)		// automatically sets to upper limit
-		score = MAX_SCORE;
-	else if (num < MIN_SCORE)	// automatically sets to lower limit
-		score = MIN_SCORE;
+	if (num > MAX_SCORE)		
+		score = MAX_SCORE;		// automatically sets to upper limit
+	else if (num < MIN_SCORE)
+		score = MIN_SCORE;		// automatically sets to lower limit
 
 	score = num;
 }
@@ -82,35 +82,40 @@ inline void Player::dec_score()
  * TODO
  * @param plyrs Number of players to initialze vector with
  * @param s_max Number of players shown at a time in a table
- * @param m_players Maximum number of players that can be created
+ * @param m_plyrs Maximum number of players that can be created
  * @param s_f Name of a file to which the table is saved instead of output
  * @param s_hf Name of a history file from which previous infomation is
  *				loaded.
  */
 void Scoreboard::Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT,
-							int m_players = PLIMIT, 
+							int m_plyrs = PLIMIT, 
 							const std::string s_f = "", 
 							const std::string s_hf = "")
 {
-	debug_msg("Scoreboard " << s_max << " limit:" << m_players);
+	debug_msg("Scoreboard " << s_max << " limit:" << m_plyrs);
 
-	if (plyrs > m_players)
+	if (plyrs > m_plyrs)
 	{
-		report_war("Only " << m_players << " players will be created, change
+		report_war("Only " << m_plyrs << " players will be created, change
 			this limit later: set plimit N, where N is the new limit");
-		plyrs = m_players;
+		plyrs = m_plyrs;
 	}
 
 	// init vector of players to plyrs number of players
 	for(int i = 0; i < plyrs; i++)
 	{
+		// std::ostringstream msg;
+		// msg << "Player_" << i+1;
+		// msg.str()
 		Player pl("Player_" << i+1);
 		players.push_back(pl);
 	}
 
 	// init 
 	show_max = s_max;			// maximum number of players shown 
-	max_players = m_players;	// maximum players that can be created
+	max_players = m_plyrs;		// maximum players that can be created
+
+	// TODO mode file-saving if empty string
 	save_f(s_f);				// initialize save file
 	h_file(s_hf);				// initialize history file
 }
@@ -136,7 +141,7 @@ inline void Scoreboard::set_max_players(int num)
 	if (num < 0)
 		report_err("Incorrect number of maximum players shown");
 
-	while(players.size() > num)	// remove players above limit
+	while (players.size() > num)	// remove players above limit
 		players.pop_back();
 
 	max_players = num;
@@ -144,19 +149,32 @@ inline void Scoreboard::set_max_players(int num)
 
 /**
  * @brief Adds a player to the scoreboard
+ * 	Checks player limit, uniqueness of player's name, if not unique, then
+ *	(N) is prepended, wher N is the number of that many times used name
  * @param name Name of the player
  * @param score Score of the player
  */
 void Scoreboard::add_player(std::string name = "", int score = 0)
 {
-	if (players.size() >= max_players)
+	if (players.size() >= max_players)		// checking limit of players
 		report_err("Cannot create another player, at limit!");
-		
+
+	std::string pl_name;
+
 	if (name.empty())	// default used - generate name
-		name{"Player_" << players.size()}; // TODO for now just some number
+		pl_name{"Player_" << players.size()};	// TODO or ()
+	else
+	{					// checking uniqueness of player's name
+		std::unordered_set<Player>::const_iterator it = p_names.find(name)
+		for (int i = 1; it != p_names.end(); i++)
+		{
+			pl_name = "("+ i +")"+ name;	// prepending (N) 
+			p_names.find(pl_name);
+		}
+	}	
 
-	Player pl("Player_" << i+1, score);
-
+	Player pl(pl_name, score);
+	p_names.insert(pl_name);
 	players.push_back(pl);
 }
 
@@ -180,8 +198,27 @@ inline Player const *Scoreboard::get_player(int rank)
  */ 
 Player const *Scoreboard::get_player(std::string name)
 {
-	// TODO a map of names?
+	if (name.empty())
+		return nullptr;
 
+	int match = 0;
+	Player *pl = nullptr;
+
+	// TODO a map of names? for now just loop through the vector
+	for (std::vector<Player>::iterator it = players.begin(); 
+		it != players.end(); it++)
+	{
+		if (it->name == name)
+		{
+			pl = *it;	// TODO
+			match++;
+		}
+	}
+
+	if (match > 1 || pl == nullptr)
+		return nullptr;
+	
+	return pl;
 }
 
 /**
@@ -189,7 +226,10 @@ Player const *Scoreboard::get_player(std::string name)
  */
 inline void Scoreboard::rm_player(int rank)
 {
-
+	if (rank < 1 || rank > players.size())	// use exceptions TODO
+		report_err("Incorrect player rank");
+	
+	players.erase(rank-1);	// TODO inefficient
 }
 
 /**
@@ -210,7 +250,7 @@ inline void Scoreboard::rm_players()
 
 /**
  * @brief
- */
+ *	/
 inline void Scoreboard::rename_player(int rank, std::string new_name)
 {
 
