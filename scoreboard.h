@@ -48,7 +48,7 @@ enum Consts
 	MIN_SCORE = -999;
 
 	// name limits
-	MAX_PNAME = 40;	// 40 chars, 32 + 7 optional + \0
+	MAX_PNAME = 32;	// 40 chars, 32 + 7 optional + \0
 };
 
 
