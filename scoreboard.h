@@ -99,12 +99,14 @@ class Scoreboard
 
 		// player modification methods
 		void add_player(const std::string &name = "", int score = 0);
-		void add_players(int num);		// TODO maybe just one function
-		Player const *get_player(int rank);
-		Player const *get_player(std::string name);
+
+		Pl_sort_it *get_player(int rank);
+		Pl_sort_it *get_player(std::string &name);
+
 		void rm_player(int rank);
 		void rm_player(std::string name);
 		void rm_players();
+
 		void rename_player(int rank, std::string new_name);
 		void rename_player(std::string name, std::string new_name);
 
@@ -124,8 +126,10 @@ class Scoreboard
 		~Scoreboard();			// destructor
 	private:
 		typedef std::function<bool(std::pair<char *, int>, 
-			std::pair<char *, int>)> Comparator;
-		void sort_scb();
+			std::pair<char *, int>)> Comparator;	// predicate
+		typedef std::set<std::pair<char *, int>>::iterator
+			Pl_sort_it;
+		void sort_scb();				// sorting function for set pl_sort
 };
 
 #endif	// include SCOREBOARD_H
