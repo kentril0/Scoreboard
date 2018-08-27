@@ -100,9 +100,6 @@ class Scoreboard
 		// player modification methods
 		void add_player(const std::string &name = "", int score = 0);
 
-		Pl_sort_it *get_player(int rank);
-		Pl_sort_it *get_player(std::string &name);
-
 		void rm_player(int rank);
 		void rm_player(std::string name);
 		void rm_players();
@@ -127,9 +124,10 @@ class Scoreboard
 	private:
 		typedef std::function<bool(std::pair<char *, int>, 
 			std::pair<char *, int>)> Comparator;	// predicate
-		typedef std::set<std::pair<char *, int>>::iterator
-			Pl_sort_it;
+		typedef std::map<char *, int>::iterator Pl_it;
 		void sort_scb();				// sorting function for set pl_sort
+		Pl_it *get_player(int rank);
+		Pl_it *get_player(std::string &name);
 };
 
 #endif	// include SCOREBOARD_H
