@@ -126,8 +126,8 @@ class Scoreboard
 			std::pair<char *, int>)> Comparator;	// predicate
 		typedef std::map<char *, int>::iterator Pl_it;
 		void sort_scb();				// sorting function for set pl_sort
-		Pl_it *get_player(int rank);
-		Pl_it *get_player(std::string &name);
+		Pl_it get_player(int rank);
+		Pl_it get_player(std::string &name);
 };
 
 #endif	// include SCOREBOARD_H
