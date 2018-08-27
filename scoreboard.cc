@@ -240,25 +240,28 @@ inline void Scoreboard::rm_player(int rank)
 	std::set<std::pair<char *, int>>::iterator it = 
 		std::next(pl_sort.begin(), rank-1);
 	
-	players.erase(it->name);
+	delete [](it->first);					// free the mem TODO check
+	players.erase(it->first);
+	pl_sort.erase(it);						// TODO sort again??
 }
 
 /**
  * @brief Removes a player with a certain name
  * @param Name of the player to be removed
  */
-inline void Scoreboard::rm_player(std::string name)
+inline void Scoreboard::rm_player(std::string &name)
 {
 	if (name.empty())
 		return;
-
-	if (p_names.find(name))		// TODO or needed iterator
-		for (std::vector<Player>::iterator it = players.begin(); 
-			it != players.end(); it++)	// or const iterator or foreach
-		{
-			if (it->name == name)
-				players.erase(it);
-		}
+	
+	std::map<char *, int>::iterator it = p_names.find(name);
+	if (it != p_names.end())
+	{
+		pl_sort.erase(it->first);			// TODO pair needed??
+		delete [](it->first);
+		players.erase(it);
+		return;
+	}
 
 	report_war("Player with that name does not exist");
 }
@@ -268,7 +271,12 @@ inline void Scoreboard::rm_player(std::string name)
  */
 inline void Scoreboard::rm_players()
 {
+	for (std::map<char *, int>::iterator it = players.begin(); 
+		it != players.end(); it++)
+		delete [](it->first);				// delete alloc. strings
 
+	players.clear();
+	pl_sort.clear();
 }
 
 /**
