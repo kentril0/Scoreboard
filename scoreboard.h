@@ -38,7 +38,7 @@ enum Consts
 {
 	// hard limit for number of players - USHRT_MAX
 	S_PLIMIT = UCHAR_MAX;	// soft player limit
-	H_PLIMIT = USHRT_MAX;
+	H_PLIMIT = USHRT_MAX;	// hard player limit
 
 	// that many players defined by the height of the terminal will be shown
 	HGHT_LIMIT = -110;
@@ -48,7 +48,8 @@ enum Consts
 	MIN_SCORE = -999;
 
 	// name limits
-	MAX_PNAME = 32;	// 40 chars, 32 + 7 optional + \0
+	MAX_PNAME = 32;			// 40 chars, 32 + 7 optional + \0 - max length
+	PNAME_LIMIT = 40;		// hard limit, also true size of string
 };
 
 
