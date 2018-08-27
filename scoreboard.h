@@ -31,20 +31,29 @@
 #define report_war(x) do { std::cerr << "<Warning>: " << x << std::endl; \
 	} while(0)
 
+/**
+ * @brief An enum for all constants
+ */
+enum Consts
+{
+	// hard limit for number of players - USHRT_MAX
+	S_PLIMIT = UCHAR_MAX;	// soft player limit
+	H_PLIMIT = USHRT_MAX;
 
-// hard limit for number of players - USHRT_MAX
-const int PLIMIT = UCHAR_MAX;	// soft player limit
+	// that many players defined by the height of the terminal will be shown
+	HGHT_LIMIT = -110;
 
-// show that many players defined by the height of the terminal
-const int HGHT_LIMIT = -110;
+	// score limits
+	MAX_SCORE = 999;
+	MIN_SCORE = -999;
 
-// score limits
-const int MAX_SCORE = 999;
-const int MIN_SCORE = -999;
+	// name limits
+	MAX_PNAME = 40;	// 40 chars, 32 + 7 optional + \0
+};
 
 
 /**
- * @brief
+ * @brief TODO DEPRECATED NOW TODO
  */
 class Player
 {
@@ -73,8 +82,8 @@ public:
  */
 class Scoreboard
 {
-		std::vector<Player> players;///< Vector of players
-		std::unordered_set<std::string> p_names;	//< set of player names
+		std::map<char *, int> players;	//< map of player names and scores
+		std::set<std::pair<char *, int>, Comparator> pl_sort;
 		int show_max;				///< How many players are shown
 		int max_players;			///< Max. players to save info about
 		std::ostream save_f;		///< Can be printed to a file
@@ -114,8 +123,8 @@ class Scoreboard
 
 		~Scoreboard();			// destructor
 	private:
-		bool score_cmp(const Player &a, const Player &b)
-			{ return a.score > b.score; }
+		typedef std::function<bool(std::pair<char *, int>, 
+			std::pair<char *, int>)> Comparator;
 };
 
 #endif	// include SCOREBOARD_H
