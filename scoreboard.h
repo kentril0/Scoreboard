@@ -125,6 +125,7 @@ class Scoreboard
 	private:
 		typedef std::function<bool(std::pair<char *, int>, 
 			std::pair<char *, int>)> Comparator;
+		void sort_scb();
 };
 
 #endif	// include SCOREBOARD_H
