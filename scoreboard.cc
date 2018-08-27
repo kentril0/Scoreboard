@@ -139,7 +139,7 @@ inline void Scoreboard::set_show_max(int num)
  */
 inline void Scoreboard::set_max_players(int num)
 {
-	if (num < 0 || num > USHRT_MAX)
+	if (num < 0 || num > USHRT_MAX)	// hard limit 
 		report_err("Incorrect number of maximum players shown");
 
 	while (players.size() > num)	// remove players above limit
@@ -155,31 +155,33 @@ inline void Scoreboard::set_max_players(int num)
  * @param name Name of the player
  * @param score Score of the player
  */
-void Scoreboard::add_player(std::string name = "", int score = 0)
+void Scoreboard::add_player(const std::string &name = "", int score = 0)
 {
 	if (players.size() >= max_players)		// checking limit of players
 		report_err("Cannot create another player, at limit!");
+	
+	if (name.length() > MAX_PNAME)			// max limit of chars exceeded
+		report_err("Player name too long, maximum 32 characters!")
 
 	std::string pl_name;
 
 	if (name.empty())	// default used - generate name
-		pl_name{"Player_" << players.size()};	// TODO or ()
+		pl_name{"Player"};	// TODO or ()
 	else
-	{					// checking uniqueness of player's name
-		std::unordered_set<Player>::const_iterator it = p_names.find(name)
-		for (int i = 1; it != p_names.end(); i++)
-		{
-			pl_name = "("+ i +")"+ name;	// prepending (N) 
-			p_names.find(pl_name);
-		}
-	}	
+		pl_name{name};	// copy constructor
 
-	Player pl(pl_name, score);
-	p_names.insert(pl_name);
-	players.push_back(pl);
+	// checking uniqueness of player's name
+	std::map<char *, int>::const_iterator it = players.find(pl_name);
+	for (int i = 1; it != players.end(); i++)
+	{
+		pl_name = "("+ i +")"+ name;	// prepending (N) 
+		players.find(pl_name);
+	}
 
-	if (score)								// is not 0
-		std::sort(players.begin(), players.end(), score_cmp);
+	players[name] = score;				// adding player
+
+	if (score)							// is not 0, need to sort
+		sort_scb();
 }
 
 /**
@@ -205,28 +207,21 @@ Player const *Scoreboard::get_player(std::string name)
 	if (name.empty())
 		return nullptr;
 
-	int match = 0;
-	Player *pl = nullptr;
-
-	// TODO a map of names? for now just loop through the vector
-	for (std::vector<Player>::iterator it = players.begin(); 
-		it != players.end(); it++)
-	{
-		if (it->name == name)
+	if (p_names.find(name))		// TODO or needed iterator
+		for (std::vector<Player>::iterator it = players.begin(); 
+			it != players.end(); it++)	// or const iterator or foreach
 		{
-			pl = *it;	// TODO
-			match++;
+			if (it->name == name)
+				return it;
 		}
-	}
 
-	if (match > 1 || pl == nullptr)
-		return nullptr;
-	
-	return pl;
+	report_war("Player with that name does not exist");
+	return nullptr;
 }
 
 /**
- * @brief
+ * @brief Removes a player with certain rank
+ * @param rank Rank of the player to be removed
  */
 inline void Scoreboard::rm_player(int rank)
 {
@@ -237,15 +232,27 @@ inline void Scoreboard::rm_player(int rank)
 }
 
 /**
- * @brief
+ * @brief Removes a player with a certain name
+ * @param Name of the player to be removed
  */
 inline void Scoreboard::rm_player(std::string name)
 {
+	if (name.empty())
+		return;
 
+	if (p_names.find(name))		// TODO or needed iterator
+		for (std::vector<Player>::iterator it = players.begin(); 
+			it != players.end(); it++)	// or const iterator or foreach
+		{
+			if (it->name == name)
+				players.erase(it);
+		}
+
+	report_war("Player with that name does not exist");
 }
 
 /**
- * @brief
+ * @brief Empties both structures
  */
 inline void Scoreboard::rm_players()
 {
@@ -254,7 +261,7 @@ inline void Scoreboard::rm_players()
 
 /**
  * @brief
- *	/
+ */
 inline void Scoreboard::rename_player(int rank, std::string new_name)
 {
 
@@ -338,4 +345,20 @@ inline bool Scoreboard::load_history(std::istream file)
 inline void Scoreboard::print(std::ostream & strm = std::cout)
 {
 
+}
+
+/**
+ * @brief Sorts the scoreboard players based on their score using
+ *	set structure descending and aplhabetically when scores match
+ */
+inline void Scoreboard::sort_scb()
+{
+	Comparator compFunctor =
+		[](std::pair<char *, int> const &a, std::pair<char *, int> const &b)
+		{
+			return a.second != b.second ? a.second > b.second :
+											a.first < b.first;
+		};
+
+	pl_sort(players.begin(), players.end(), compFunctor);
 }
