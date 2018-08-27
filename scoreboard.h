@@ -98,7 +98,7 @@ class Scoreboard
 		void set_max_players(int num);
 
 		// player modification methods
-		void add_player(std::string name = "", int score = 0);
+		void add_player(const std::string &name = "", int score = 0);
 		void add_players(int num);		// TODO maybe just one function
 		Player const *get_player(int rank);
 		Player const *get_player(std::string name);
