@@ -15,7 +15,7 @@
  * @brief Sets a player name
  * @param name Desired new name
  */
-inline void Player::set_name(const std::string name)
+inline void Player::set_name(const std::string &name)
 {
 	this->name{name};
 }
@@ -89,7 +89,7 @@ inline void Player::dec_score()
  *				loaded.
  */
 void Scoreboard::Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT,
-							int m_plyrs = PLIMIT, 
+							int m_plyrs = S_PLIMIT, 
 							const std::string s_f = "", 
 							const std::string s_hf = "")
 {
@@ -104,13 +104,7 @@ void Scoreboard::Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT,
 
 	// init vector of players to plyrs number of players
 	for(int i = 0; i < plyrs; i++)
-	{
-		// std::ostringstream msg;
-		// msg << "Player_" << i+1;
-		// msg.str()
-		Player pl("Player_" << i+1);
-		players.push_back(pl);
-	}
+		add_player();
 
 	// init 
 	show_max = s_max;			// maximum number of players shown 
@@ -142,8 +136,12 @@ inline void Scoreboard::set_max_players(int num)
 	if (num < 0 || num > USHRT_MAX)	// hard limit 
 		report_err("Incorrect number of maximum players shown");
 
-	while (players.size() > num)	// remove players above limit
-		players.pop_back();
+	int i = players.size()-1;
+	while (i > num)			// remove players above limit
+	{
+		rm_player(i);		// TODO range delete
+		i--;
+	}
 
 	max_players = num;
 }
@@ -282,7 +280,7 @@ inline void Scoreboard::rm_players()
 /**
  * @brief
  */
-inline void Scoreboard::rename_player(int rank, std::string new_name)
+inline void Scoreboard::rename_player(int rank, std::string &new_name)
 {
 
 }
@@ -290,7 +288,8 @@ inline void Scoreboard::rename_player(int rank, std::string new_name)
 /**
  * @brief
  */
-inline void Scoreboard::rename_player(std::string name, std::string new_name)
+inline void Scoreboard::rename_player(std::string &name, 
+										std::string &new_name)
 {
 
 }
@@ -306,7 +305,7 @@ inline void Scoreboard::add_pscore(int rank, int num)
 /**
  * @brief
  */
-inline void Scoreboard::add_pscore(std::string name, int num)
+inline void Scoreboard::add_pscore(std::string &name, int num)
 {
 
 }
@@ -322,7 +321,7 @@ inline void Scoreboard::reset_pscore(int rank)
 /**
  * @brief
  */
-inline void Scoreboard::reset_pscore(std::string name)
+inline void Scoreboard::reset_pscore(std::string &name)
 {
 
 }

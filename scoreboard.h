@@ -66,7 +66,7 @@ public:
 	Player(const std::string new_name, int sc = 0): name{new_name}, 
 													score{sc} {}
 	// name modifying methods
-	void set_name(const std::string name);
+	void set_name(const std::string &name);
 	std::string *get_name() const;	// TODO TEST CONST POINTER
 
 	// score modifying methods
@@ -92,7 +92,7 @@ class Scoreboard
 	public:
 		// constructor
 		Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT, 
-					int m_plyrs = PLIMIT, const std::string s_f = "",
+					int m_plyrs = S_PLIMIT, const std::string s_f = "",
 					const std::string s_hf = "");
 
 		void set_show_max(int num);
@@ -102,17 +102,17 @@ class Scoreboard
 		void add_player(const std::string &name = "", int score = 0);
 
 		void rm_player(int rank);
-		void rm_player(std::string name);
+		void rm_player(std::string &name);
 		void rm_players();
 
-		void rename_player(int rank, std::string new_name);
-		void rename_player(std::string name, std::string new_name);
+		void rename_player(int rank, std::string &new_name);
+		void rename_player(std::string &name, std::string &new_name);
 
 		// score modification methods
 		void add_pscore(int rank, int num);
-		void add_pscore(std::string name, int num);
+		void add_pscore(std::string &name, int num);
 		void reset_pscore(int rank);
-		void reset_pscore(std::string name);
+		void reset_pscore(std::string &name);
 		void reset_score();
 		
 		bool save_to_file(std::ostream file);
