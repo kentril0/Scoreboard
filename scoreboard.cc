@@ -163,22 +163,32 @@ void Scoreboard::add_player(const std::string &name = "", int score = 0)
 	if (name.length() > MAX_PNAME)			// max limit of chars exceeded
 		report_err("Player name too long, maximum 32 characters!")
 
-	std::string pl_name;
+	char *p_name = new char[MAX_PNAME]();	// TODO exceptions
+	std::memset(p_name, '\0', MAX_PNAME);
+	char *null_pos;							// pointer to null position
 
 	if (name.empty())	// default used - generate name
-		pl_name{"Player"};	// TODO or ()
-	else
-		pl_name{name};	// copy constructor
-
-	// checking uniqueness of player's name
-	std::map<char *, int>::const_iterator it = players.find(pl_name);
-	for (int i = 1; it != players.end(); i++)
 	{
-		pl_name = "("+ i +")"+ name;	// prepending (N) 
-		players.find(pl_name);
+		std::strcpy(p_name, "Player");
+		null_pos = &p_name[6];
+	}
+	else				// copy name
+	{
+		std::strcpy(p_name, name.c_str());
+		null_pos = &p_name[name.length()];	// TODO check
 	}
 
-	players[name] = score;				// adding player
+	std::string aux;
+	// checking uniqueness of player's name
+	std::map<char *, int>::const_iterator it = players.find(p_name);
+	for (int i = 1; it != players.end(); i++)
+	{
+		aux << "(" << i << ")";				// max (65534)
+		std::strcpy(null_pos, aux.c_str());	// appending (N) 
+		it = players.find(p_name);
+	}
+
+	players[p_name] = score;				// adding player
 
 	if (score)							// is not 0, need to sort
 		sort_scb();
@@ -187,33 +197,32 @@ void Scoreboard::add_player(const std::string &name = "", int score = 0)
 /**
  * @brief Gets a pointer reference to a player using his rank
  * @param rank A position in the table score system
- * @return Const pointer to the player
+ * @return Pointer to the player iterator
  */ 
-inline Player const *Scoreboard::get_player(int rank)
+inline Pl_it Scoreboard::get_player(int rank)
 {
 	if (rank < 1 || rank > players.size())	// use exceptions TODO
 		report_err("Incorrect player rank");
 	
-	return players.at(rank-1);
+	std::set<std::pair<char *, int>>::iterator it = 
+		std::next(pl_sort.begin(), rank-1);
+	
+	return players.find(it->name);
 }
 
 /**
  * @brief Gets a pointer reference to a player using his name
  * @param name Player's identifiable name
- * @return Const pointer to the player
+ * @return Pointer to the player iterator
  */ 
-Player const *Scoreboard::get_player(std::string name)
+inline Pl_it Scoreboard::get_player(std::string &name)
 {
 	if (name.empty())
 		return nullptr;
 
-	if (p_names.find(name))		// TODO or needed iterator
-		for (std::vector<Player>::iterator it = players.begin(); 
-			it != players.end(); it++)	// or const iterator or foreach
-		{
-			if (it->name == name)
-				return it;
-		}
+	Pl_it it = players.find(name);
+	if (it != players.end())
+		return it;
 
 	report_war("Player with that name does not exist");
 	return nullptr;
@@ -228,7 +237,10 @@ inline void Scoreboard::rm_player(int rank)
 	if (rank < 1 || rank > players.size())	// use exceptions TODO
 		report_err("Incorrect player rank");
 	
-	players.erase(rank-1);	// TODO inefficient
+	std::set<std::pair<char *, int>>::iterator it = 
+		std::next(pl_sort.begin(), rank-1);
+	
+	players.erase(it->name);
 }
 
 /**
@@ -353,7 +365,9 @@ inline void Scoreboard::print(std::ostream & strm = std::cout)
  */
 inline void Scoreboard::sort_scb()
 {
-	Comparator compFunctor =
+	// lambda function object for comparing two pairs, 
+	//	first values then keys if match
+	Comparator compFunctor =	
 		[](std::pair<char *, int> const &a, std::pair<char *, int> const &b)
 		{
 			return a.second != b.second ? a.second > b.second :
