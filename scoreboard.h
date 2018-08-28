@@ -20,9 +20,13 @@
 #ifndef DEBUG
 #define debug_msg(...)
 #else
-#define debug_msg(x) do { std::cerr << __FUNCTION__ << ":" <<			\
+#define debug_msg(x) do { std::cerr << __FUNCTION__ << ": " <<			\
 								<< __LINE__ << ": " << x << std::endl; 	\
 						} while(0)
+
+#define debug_info() do { std::cerr << __FUNCTION__ << ": " <<			\
+								<< __LINE__ << std::endl; } while(0)
+
 #endif
 
 #define report_err(x) do { std::cerr << "<Error>: " << x << std::endl; \

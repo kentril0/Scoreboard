@@ -121,6 +121,8 @@ void Scoreboard::Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT,
  */
 inline void Scoreboard::set_show_max(int num)
 {
+	debug_info();
+
 	if (num < 0 || num > USHRT_MAX)
 		report_err("Incorrect number of maximum players shown");
 
@@ -133,6 +135,8 @@ inline void Scoreboard::set_show_max(int num)
  */
 inline void Scoreboard::set_max_players(int num)
 {
+	debug_info();
+
 	if (num < 0 || num > USHRT_MAX)	// hard limit 
 		report_err("Incorrect number of maximum players shown");
 
@@ -155,6 +159,8 @@ inline void Scoreboard::set_max_players(int num)
  */
 void Scoreboard::add_player(const std::string &name = "", int score = 0)
 {
+	debug_info();
+
 	if (players.size() >= max_players)		// checking limit of players
 		report_err("Cannot create another player, at limit!");
 	
@@ -198,6 +204,8 @@ void Scoreboard::add_player(const std::string &name = "", int score = 0)
  */ 
 inline Pl_it Scoreboard::get_player(int rank)
 {
+	debug_info();
+
 	if (rank < 1 || rank > players.size())	// use exceptions TODO
 		report_err("Incorrect player rank");
 	
@@ -214,6 +222,8 @@ inline Pl_it Scoreboard::get_player(int rank)
  */ 
 inline Pl_it Scoreboard::get_player(std::string &name)
 {
+	debug_info();
+
 	if (name.empty() || name.length > PNAME_LIMIT)
 		return nullptr;
 
@@ -231,6 +241,8 @@ inline Pl_it Scoreboard::get_player(std::string &name)
  */
 inline void Scoreboard::rm_player(int rank)
 {
+	debug_info();
+
 	if (rank < 1 || rank > players.size())	// use exceptions TODO
 		report_err("Incorrect player rank");
 	
@@ -248,6 +260,8 @@ inline void Scoreboard::rm_player(int rank)
  */
 inline void Scoreboard::rm_player(std::string &name)
 {
+	debug_info();
+
 	if (name.empty())
 		return;
 	
@@ -268,6 +282,8 @@ inline void Scoreboard::rm_player(std::string &name)
  */
 inline void Scoreboard::rm_players()
 {
+	debug_info();
+
 	for (std::map<char *, int>::iterator it = players.begin(); 
 		it != players.end(); it++)
 		delete [](it->first);				// delete alloc. strings
@@ -284,6 +300,8 @@ inline void Scoreboard::rm_players()
  */
 inline void Scoreboard::rename_player(int rank, std::string &new_name)
 {
+	debug_info();
+
 	if (new_name.empty() || new_name.length > MAX_PNAME)
 		report_err("Incorrect new name specified")
 
@@ -312,6 +330,8 @@ inline void Scoreboard::rename_player(int rank, std::string &new_name)
 inline void Scoreboard::rename_player(std::string &name, 
 										std::string &new_name)
 {
+	debug_info();
+
 	if (new_name.empty() || new_name.length > MAX_PNAME)
 		report_err("Incorrect new name specified")
 
@@ -339,6 +359,8 @@ inline void Scoreboard::rename_player(std::string &name,
  */
 inline void Scoreboard::add_pscore(int rank, int num)
 {
+	debug_info();
+
 	auto it = get_player(rank);
 	if (!it)
 		return;
@@ -360,6 +382,8 @@ inline void Scoreboard::add_pscore(int rank, int num)
  */
 inline void Scoreboard::add_pscore(std::string &name, int num)
 {
+	debug_info();
+
 	auto it = get_player(name);
 	if (!it)
 		return;
@@ -380,6 +404,8 @@ inline void Scoreboard::add_pscore(std::string &name, int num)
  */
 inline void Scoreboard::reset_pscore(int rank)
 {
+	debug_info();
+
 	auto it = get_player(rank);
 	if (!it)
 		return;
@@ -395,6 +421,8 @@ inline void Scoreboard::reset_pscore(int rank)
  */
 inline void Scoreboard::reset_pscore(std::string &name)
 {
+	debug_info();
+
 	auto it = get_player(rank);
 	if (!it)
 		return;
@@ -409,6 +437,8 @@ inline void Scoreboard::reset_pscore(std::string &name)
  */
 inline void Scoreboard::reset_score()
 {
+	debug_info();
+
 	for (auto it = players.begin(); it != players.end(); it++)
 		it->second = 0;
 
@@ -420,6 +450,7 @@ inline void Scoreboard::reset_score()
  */
 inline bool Scoreboard::save_to_file(std::ostream file)
 {
+	debug_info();
 
 }
 
@@ -428,6 +459,7 @@ inline bool Scoreboard::save_to_file(std::ostream file)
  */
 inline bool Scoreboard::load_players_from_file(std::istream file)
 {
+	debug_info();
 
 }
 
@@ -436,6 +468,7 @@ inline bool Scoreboard::load_players_from_file(std::istream file)
  */
 inline bool Scoreboard::load_history(std::istream file)
 {
+	debug_info();
 
 }
 
@@ -444,7 +477,10 @@ inline bool Scoreboard::load_history(std::istream file)
  */
 inline void Scoreboard::print(std::ostream & strm = std::cout)
 {
+	debug_info();
 
+	for (auto it = pl_sort.begin(); it != pl_sort.end(); it++)
+		strm << "| " << it->first " | " << it->second " |\n";
 }
 
 /**
@@ -453,6 +489,8 @@ inline void Scoreboard::print(std::ostream & strm = std::cout)
  */
 inline void Scoreboard::sort_scb()
 {
+	debug_info();
+
 	// lambda function object for comparing two pairs, 
 	//	first values then keys if match
 	Comparator compFunctor =	
