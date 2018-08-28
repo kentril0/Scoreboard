@@ -188,8 +188,7 @@ void Scoreboard::add_player(const std::string &name = "", int score = 0)
 
 	players[p_name] = score;				// adding player
 
-	if (score)							// is not 0, need to sort
-		sort_scb();
+	sort_scb();								// need to sort
 }
 
 /**
@@ -289,7 +288,9 @@ inline void Scoreboard::rename_player(int rank, std::string &new_name)
 		report_err("Incorrect new name specified")
 
 	auto it = Pl_it Scoreboard::get_player(rank);	// checking rank
-	
+	if (!it)
+		return;
+
 	// checking uniqueness of player's name
 	std::string aux;
 	std::map<char *, int>::const_iterator a_it = players.find(new_name);
@@ -315,6 +316,8 @@ inline void Scoreboard::rename_player(std::string &name,
 		report_err("Incorrect new name specified")
 
 	auto it = Pl_it Scoreboard::get_player(new_name);	// checking name
+	if (!it)
+		return;
 
 	// checking uniqueness of player's name
 	std::string aux;
@@ -330,47 +333,90 @@ inline void Scoreboard::rename_player(std::string &name,
 }
 
 /**
- * @brief
+ * @brief Adds a number to a player's score, identified by his rank
+ * @param rank Rank of player
+ * @param num Number added to the player's score (can be negative)
  */
 inline void Scoreboard::add_pscore(int rank, int num)
 {
+	auto it = get_player(rank);
+	if (!it)
+		return;
 
+	if (num > MAX_SCORE)		
+		num = MAX_SCORE;		// automatically sets to upper limit
+	else if (num < MIN_SCORE)
+		num = MIN_SCORE;		// automatically sets to lower limit
+
+	it->second += num;
+
+	sort_scb();					// need to sort again
 }
 
 /**
- * @brief
+ * @brief Adds a number to a player's score, identified by his name
+ * @param name Name of the player
+ * @param num Number added to the player's score (can be negative)
  */
 inline void Scoreboard::add_pscore(std::string &name, int num)
 {
+	auto it = get_player(name);
+	if (!it)
+		return;
 
+	if (num > MAX_SCORE)		
+		num = MAX_SCORE;		// automatically sets to upper limit
+	else if (num < MIN_SCORE)
+		num = MIN_SCORE;		// automatically sets to lower limit
+
+	it->second += num;
+
+	sort_scb();					// need to sort again
 }
 
 /**
- * @brief
+ * @brief Resets player's score to 0
+ * @param rank Player's rank
  */
 inline void Scoreboard::reset_pscore(int rank)
 {
+	auto it = get_player(rank);
+	if (!it)
+		return;
 
+	it->second = 0;
+
+	sort_scb();					// need to sort again
 }
 
 /**
- * @brief
+ * @brief Resets player's score to 0
+ * @param name Player's name
  */
 inline void Scoreboard::reset_pscore(std::string &name)
 {
+	auto it = get_player(rank);
+	if (!it)
+		return;
 
+	it->second = 0;
+
+	sort_scb();					// need to sort again
 }
 
 /**
- * @brief
+ * @brief Resets score of all players to zero
  */
 inline void Scoreboard::reset_score()
 {
+	for (auto it = players.begin(); it != players.end(); it++)
+		it->second = 0;
 
+	sort_scb();					// need to sort again
 }
 		
 /**
- * @brief
+ * @brief TODO
  */
 inline bool Scoreboard::save_to_file(std::ostream file)
 {
@@ -378,7 +424,7 @@ inline bool Scoreboard::save_to_file(std::ostream file)
 }
 
 /**
- * @brief
+ * @brief TODO
  */
 inline bool Scoreboard::load_players_from_file(std::istream file)
 {
@@ -386,7 +432,7 @@ inline bool Scoreboard::load_players_from_file(std::istream file)
 }
 
 /**
- * @brief
+ * @brief TODO
  */
 inline bool Scoreboard::load_history(std::istream file)
 {
