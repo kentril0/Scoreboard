@@ -215,7 +215,7 @@ inline Pl_it Scoreboard::get_player(int rank)
  */ 
 inline Pl_it Scoreboard::get_player(std::string &name)
 {
-	if (name.empty())
+	if (name.empty() || name.length > PNAME_LIMIT)
 		return nullptr;
 
 	Pl_it it = players.find(name);
@@ -278,20 +278,55 @@ inline void Scoreboard::rm_players()
 }
 
 /**
- * @brief
+ * @brief Renames player defined by his rank to new_name. No empty string
+ *	and maximally 32 characters long string.
+ * @param rank Rank of the player whoose name will be changed
+ * @param new_name New name of the player
  */
 inline void Scoreboard::rename_player(int rank, std::string &new_name)
 {
+	if (new_name.empty() || new_name.length > MAX_PNAME)
+		report_err("Incorrect new name specified")
 
+	auto it = Pl_it Scoreboard::get_player(rank);	// checking rank
+	
+	// checking uniqueness of player's name
+	std::string aux;
+	std::map<char *, int>::const_iterator a_it = players.find(new_name);
+	for (int i = 1; a_it != players.end(); i++)
+	{
+		aux.clear();
+		aux << new_name << "(" << i << ")";
+		a_it = players.find(aux);
+	}
+
+	std::strcpy(it->first, aux);					// copy name over
 }
 
 /**
- * @brief
+ * @brief Renames player defined by his name to a new_name
+ * @param name Name of the player to be renamed
+ * @param new_name A new name for the player
  */
 inline void Scoreboard::rename_player(std::string &name, 
 										std::string &new_name)
 {
+	if (new_name.empty() || new_name.length > MAX_PNAME)
+		report_err("Incorrect new name specified")
 
+	auto it = Pl_it Scoreboard::get_player(new_name);	// checking name
+
+	// checking uniqueness of player's name
+	std::string aux;
+	std::map<char *, int>::const_iterator a_it = players.find(new_name);
+	for (int i = 1; a_it != players.end(); i++)
+	{
+		aux.clear();
+		aux << new_name << "(" << i << ")";
+		a_it = players.find(aux);
+	}
+
+	std::strcpy(it->first, aux);					// copy name over
 }
 
 /**
