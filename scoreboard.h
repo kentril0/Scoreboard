@@ -12,25 +12,27 @@
 #define SCOREBOARD_H
 
 #include <iostream>
+#include <fstream>
 #include <climits>
+#include <map>
 #include <vector>
-#include <unordered_set>
+#include <functional>
 
 // debugging macro
 #ifndef DEBUG
 #define debug_msg(...)
 #else
 #define debug_msg(x) do { std::cerr << __FUNCTION__ << ": " <<			\
-								<< __LINE__ << ": " << x << std::endl; 	\
+								__LINE__ << ": " << x << std::endl; 	\
 						} while(0)
 
 #define debug_info() do { std::cerr << __FUNCTION__ << ": " <<			\
-								<< __LINE__ << std::endl; } while(0)
+								__LINE__ << std::endl; } while(0)
 
 #endif
 
-#define report_err(x) do { std::cerr << "<Error>: " << x << std::endl; \
-	return; } while(0)
+#define report_err(x, y) do { std::cerr << "<Error>: " << x << std::endl; \
+	return y; } while(0)
 
 #define report_war(x) do { std::cerr << "<Warning>: " << x << std::endl; \
 	} while(0)
@@ -41,20 +43,23 @@
 enum Consts
 {
 	// hard limit for number of players - USHRT_MAX
-	S_PLIMIT = UCHAR_MAX;	// soft player limit
-	H_PLIMIT = USHRT_MAX;	// hard player limit
+	S_PLIMIT = UCHAR_MAX,	// soft player limit
+	H_PLIMIT = USHRT_MAX,	// hard player limit
 
 	// that many players defined by the height of the terminal will be shown
-	HGHT_LIMIT = -110;
+	HGHT_LIMIT = -110,
 
 	// score limits
-	MAX_SCORE = 999;
-	MIN_SCORE = -999;
+	MAX_SCORE = 999,
+	MIN_SCORE = -999,
 
 	// name limits
-	MAX_PNAME = 32;			// 40 chars, 32 + 7 optional + \0 - max length
-	PNAME_LIMIT = 40;		// hard limit, also true size of string
+	MAX_PNAME = 32,			// 40 chars, 32 + 7 optional + \0 - max length
+	PNAME_LIMIT = 40		// hard limit, also true size of string
 };
+
+
+typedef std::map<char *, int>::iterator Pl_it;
 
 
 /**
@@ -71,7 +76,7 @@ public:
 													score{sc} {}
 	// name modifying methods
 	void set_name(const std::string &name);
-	std::string *get_name() const;	// TODO TEST CONST POINTER
+	std::string const *get_name();
 
 	// score modifying methods
 	void set_score(int num);
@@ -88,16 +93,17 @@ public:
 class Scoreboard
 {
 		std::map<char *, int> players;	//< map of player names and scores
-		std::set<std::pair<char *, int>, Comparator> pl_sort;
+		std::vector<std::pair<char *, int>> pl_sort;
 		int show_max;				///< How many players are shown
-		int max_players;			///< Max. players to save info about
-		std::ostream save_f;		///< Can be printed to a file
-		std::ostream h_file;		///< History file saved players & scores
+		unsigned int max_players;	///< Max. players to save info about
+		std::filebuf save_f;		///< Can be printed to a file
+		std::filebuf h_file;		///< History file saved players & scores
 	public:
 		// constructor
 		Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT, 
-					int m_plyrs = S_PLIMIT, const std::string s_f = "",
-					const std::string s_hf = "");
+					int m_plyrs = S_PLIMIT, 
+					const std::string &s_f = std::string(),
+					const std::string &s_hf = std::string());
 
 		void set_show_max(int num);
 		void set_max_players(int num);
@@ -127,9 +133,6 @@ class Scoreboard
 
 		~Scoreboard();			// destructor
 	private:
-		typedef std::function<bool(std::pair<char *, int>, 
-			std::pair<char *, int>)> Comparator;	// predicate
-		typedef std::map<char *, int>::iterator Pl_it;
 		void sort_scb();				// sorting function for set pl_sort
 		Pl_it get_player(int rank);
 		Pl_it get_player(std::string &name);
