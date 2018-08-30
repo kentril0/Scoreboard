@@ -21,6 +21,9 @@
 // debugging macro
 #ifndef DEBUG
 #define debug_msg(...)
+
+#define debug_info()
+
 #else
 #define debug_msg(x) do { std::cerr << __FUNCTION__ << ": " <<			\
 								__LINE__ << ": " << x << std::endl; 	\
