@@ -9,11 +9,14 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
+#include <cctype>
+#include <unordered_map>
+
 
 /**
  * @brief Numeric constants for user commands
  */
-enum user_commands
+enum user_cmnds
 {
 	UC_PRINT = 550,
 	UC_SCOREBOARD,
@@ -38,13 +41,11 @@ enum user_commands
 	SC_ALL
 };
 
+inline void start_symb();
 
-/**
- * @brief Outputs starting symbols "SB> "
- */
-inline void start_symb()
-{
-	std::cout << "SB> ";
-}
+
+void uc_print();
+
+void uc_score();
 
 #endif
