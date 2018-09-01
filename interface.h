@@ -10,8 +10,6 @@
 #define INTERFACE_H
 
 #include <cctype>
-#include <unordered_map>
-
 
 /**
  * @brief Numeric constants for user commands
@@ -41,11 +39,27 @@ enum user_cmnds
 	SC_ALL
 };
 
+int run_scb(int argc, char *argv[]);
+void parse_args(int argc, char *argv[]);
+
 inline void start_symb();
 
-
+// user commands
 void uc_print();
-
 void uc_score();
+void uc_player();
+void uc_win();
+void uc_loss();
+void uc_set();
+void uc_save();
+void uc_load();
+
+// user subcommands
+void sc_add_sc();
+void sc_reset();
+void sc_add_p();
+void sc_remove();
+void sc_rename();
+
 
 #endif
