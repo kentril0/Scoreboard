@@ -11,6 +11,9 @@
 #include <algorithm>
 #include <cstring>
 #include <sstream>		// std::ostringstream
+#include <sys/ioctl.h>	// get terminal
+#include <unistd.h>
+
 
 
 /**
@@ -513,14 +516,41 @@ inline bool Scoreboard::load_history(std::istream file)
 }
 
 /**
- * @brief TODO
+ * @brief Prints the actual scores, players and ranking
+ * 	Layout:
+ *  _______________________________________________________________________
+ * | RANK	| PLAYER NAME									| SCORE		   |
+ *	-----------------------------------------------------------------------
+ * | 1.		| Dudefish										| 22		   |
+ * .
+ * .
+ * .
+ * | 23.	| Kentril										| -20		   |
+ *  -----------------------------------------------------------------------
  */
 inline void Scoreboard::print(std::ostream & strm)
 {
 	debug_info();
 
+	struct winsize w;
+	ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+
+	// printing header TODO consider using std AFTER to check any problems
+	strm << " " << std::string(w.ws_col-2, '_') << std::endl <<
+		"| RANK\t| PLAYER NAME " <<
+		std::string(w.ws_col-WIN_PADDING, ' ') << "| SCORE |" << std::endl;
+
+	LINE_BREAK;
+
+	int i = 1;
 	for (auto it = pl_sort.begin(); it != pl_sort.end(); it++)
-		strm << "| " << it->first << " | " << it->second << " |\n";
+	{
+		strm << "| " << i << ".\t|" << it->first << " " << 
+			std::string(w.ws_col-19-strlen(it->first), ' ') << "| " << 
+			it->second << " |" << std::endl;
+		LINE_BREAK;
+		i++;
+	}
 }
 
 /**
