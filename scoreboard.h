@@ -40,6 +40,9 @@
 #define report_war(x) do { std::cerr << "<Warning>: " << x << std::endl; \
 	} while(0)
 
+#define LINE_BREAK std::cout << " " << std::string(w.ws_col-2, '-') <<	\
+	std::endl;
+
 /**
  * @brief An enum for all constants
  */
@@ -53,12 +56,15 @@ enum Consts
 	HGHT_LIMIT = -110,
 
 	// score limits
-	MAX_SCORE = 999,
-	MIN_SCORE = -999,
+	MAX_SCORE = 9999,
+	MIN_SCORE = -9999,
 
 	// name limits
 	MAX_PNAME = 32,			// 40 chars, 32 + 7 optional + \0 - max length
-	PNAME_LIMIT = 40		// hard limit, also true size of string
+	PNAME_LIMIT = 40,		// hard limit, also true size of string
+
+	// terminal constants
+	WIN_PADDING = 29		// window padding
 };
 
 
@@ -122,8 +128,8 @@ class Scoreboard
 		void rename_player(std::string &name, std::string &new_name);
 
 		// score modification methods
-		void add_pscore(int rank, int num);
-		void add_pscore(std::string &name, int num);
+		void add_pscore(int rank, int num = 1);
+		void add_pscore(std::string &name, int num = 1);
 		void reset_pscore(int rank);
 		void reset_pscore(std::string &name);
 		void reset_score();
