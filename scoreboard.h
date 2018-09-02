@@ -97,7 +97,73 @@ public:
 };
 
 /**
- * @brief
+ * @brief Sets a player name
+ * @param name Desired new name
+ */
+inline void Player::set_name(const std::string &name)
+{
+	this->name = name;
+}
+
+/**
+ * @brief Provides access to the name of player
+ * @return Const pointer to name of player
+ */
+inline std::string const *Player::get_name()
+{
+	return &name;
+}
+
+
+/**
+ * @brief Sets score of a player
+ * @param num New score of player
+ */
+inline void Player::set_score(int num)
+{
+	if (num > MAX_SCORE)		
+		score = MAX_SCORE;		// automatically sets to upper limit
+	else if (num < MIN_SCORE)
+		score = MIN_SCORE;		// automatically sets to lower limit
+
+	score = num;
+}
+
+/**
+ * @brief Get player score
+ * @return player score
+ */
+inline int Player::get_score()
+{
+	return score;
+}
+
+/**
+ * @brief Increments player score by one
+ */
+inline void Player::inc_score()
+{
+	if (score < MAX_SCORE)
+		score++;
+	else
+		report_war("Maximum score reached");
+}
+
+/**
+ * @brief Decrements player score by one
+ */
+inline void Player::dec_score()
+{
+	if (score > MIN_SCORE)
+		score--;
+	else
+		report_war("Minimum score reached");
+}
+
+// ----------------------------------------------------------------------
+
+/**
+ * @brief TODO
  */
 class Scoreboard
 {
@@ -140,11 +206,72 @@ class Scoreboard
 
 		void print(std::ostream & strm = std::cout);
 
-		~Scoreboard();			// destructor
+		~Scoreboard() {	rm_players(); }			// destructor
 	private:
 		void sort_scb();				// sorting function for set pl_sort
 		Pl_it get_player(int rank);
 		Pl_it get_player(std::string &name);
 };
 
+/**
+ * @brief Sets current number of shown players
+ * @param num Maximum number of shown players
+ */
+inline void Scoreboard::set_show_max(int num)
+{
+	debug_info();
+
+	if (num < 0 || num > USHRT_MAX)
+		report_err("Incorrect number of maximum players shown", void());
+
+	show_max = num;
+}
+
+/**
+ * @brief Gets a pointer reference to a player using his rank
+ * @param rank A position in the table score system
+ * @return Pointer to the player iterator
+ */ 
+inline Pl_it Scoreboard::get_player(int rank)
+{
+	debug_info();
+
+	// use exceptions TODO
+	if ( (rank < 1) || (static_cast<unsigned int>(rank) > players.size()))	
+		report_err("Incorrect player rank", players.end());
+	
+	std::vector<std::pair<char *, int>>::iterator it = 
+		std::next(pl_sort.begin(), rank-1);
+	
+	return players.find(it->first);
+}
+
+/**
+ * @brief Empties both structures
+ */
+inline void Scoreboard::rm_players()
+{
+	debug_info();
+
+	for (std::map<char *, int>::iterator it = players.begin(); 
+		it != players.end(); it++)
+		delete [](it->first);				// delete alloc. strings
+
+	players.clear();
+	pl_sort.clear();
+}
+
+/**
+ * @brief Resets score of all players to zero
+ */
+inline void Scoreboard::reset_score()
+{
+	debug_info();
+
+	for (auto it = players.begin(); it != players.end(); it++)
+		it->second = 0;
+
+	sort_scb();					// need to sort again
+}
+		
 #endif	// include SCOREBOARD_H

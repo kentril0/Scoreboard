@@ -15,70 +15,6 @@
 #include <unistd.h>
 
 
-
-/**
- * @brief Sets a player name
- * @param name Desired new name
- */
-inline void Player::set_name(const std::string &name)
-{
-	this->name = name;
-}
-
-/**
- * @brief Provides access to the name of player
- * @return Const pointer to name of player
- */
-inline std::string const *Player::get_name()
-{
-	return &name;
-}
-
-/**
- * @brief Sets score of a player
- * @param num New score of player
- */
-inline void Player::set_score(int num)
-{
-	if (num > MAX_SCORE)		
-		score = MAX_SCORE;		// automatically sets to upper limit
-	else if (num < MIN_SCORE)
-		score = MIN_SCORE;		// automatically sets to lower limit
-
-	score = num;
-}
-
-/**
- * @brief Get player score
- * @return player score
- */
-inline int Player::get_score()
-{
-	return score;
-}
-
-/**
- * @brief Increments player score by one
- */
-inline void Player::inc_score()
-{
-	if (score < MAX_SCORE)
-		score++;
-	else
-		report_war("Maximum score reached");
-}
-
-/**
- * @brief Decrements player score by one
- */
-inline void Player::dec_score()
-{
-	if (score > MIN_SCORE)
-		score--;
-	else
-		report_war("Minimum score reached");
-}
-
 /* ------------------------------------------------------------ */
 
 /**
@@ -125,24 +61,10 @@ Scoreboard::Scoreboard(int plyrs, int s_max,
 }
 
 /**
- * @brief Sets current number of shown players
- * @param num Maximum number of shown players
- */
-inline void Scoreboard::set_show_max(int num)
-{
-	debug_info();
-
-	if (num < 0 || num > USHRT_MAX)
-		report_err("Incorrect number of maximum players shown", void());
-
-	show_max = num;
-}
-
-/**
  * @brief Sets maximum number of players that can be created
  * @param num Maximum number of shown players
  */
-inline void Scoreboard::set_max_players(int num)
+void Scoreboard::set_max_players(int num)
 {
 	debug_info();
 
@@ -208,30 +130,11 @@ void Scoreboard::add_player(const std::string &name, int score)
 }
 
 /**
- * @brief Gets a pointer reference to a player using his rank
- * @param rank A position in the table score system
- * @return Pointer to the player iterator
- */ 
-inline Pl_it Scoreboard::get_player(int rank)
-{
-	debug_info();
-
-	// use exceptions TODO
-	if ( (rank < 1) || (static_cast<unsigned int>(rank) > players.size()))	
-		report_err("Incorrect player rank", players.end());
-	
-	std::vector<std::pair<char *, int>>::iterator it = 
-		std::next(pl_sort.begin(), rank-1);
-	
-	return players.find(it->first);
-}
-
-/**
  * @brief Gets a pointer reference to a player using his name
  * @param name Player's identifiable name
  * @return Pointer to the player iterator
  */ 
-inline Pl_it Scoreboard::get_player(std::string &name)
+Pl_it Scoreboard::get_player(std::string &name)
 {
 	debug_info();
 
@@ -254,7 +157,7 @@ inline Pl_it Scoreboard::get_player(std::string &name)
  * @brief Removes a player with certain rank
  * @param rank Rank of the player to be removed
  */
-inline void Scoreboard::rm_player(int rank)
+void Scoreboard::rm_player(int rank)
 {
 	debug_info();
 	
@@ -274,7 +177,7 @@ inline void Scoreboard::rm_player(int rank)
  * @brief Removes a player with a certain name
  * @param Name of the player to be removed
  */
-inline void Scoreboard::rm_player(std::string &name)
+void Scoreboard::rm_player(std::string &name)
 {
 	debug_info();
 
@@ -295,21 +198,6 @@ inline void Scoreboard::rm_player(std::string &name)
 	}
 
 	report_war("Player with that name does not exist");
-}
-
-/**
- * @brief Empties both structures
- */
-inline void Scoreboard::rm_players()
-{
-	debug_info();
-
-	for (std::map<char *, int>::iterator it = players.begin(); 
-		it != players.end(); it++)
-		delete [](it->first);				// delete alloc. strings
-
-	players.clear();
-	pl_sort.clear();
 }
 
 /**
@@ -354,7 +242,7 @@ void Scoreboard::rename_player(int rank, std::string &new_name)
  * @param name Name of the player to be renamed
  * @param new_name A new name for the player
  */
-inline void Scoreboard::rename_player(std::string &name, 
+void Scoreboard::rename_player(std::string &name, 
 										std::string &new_name)
 {
 	debug_info();
@@ -391,7 +279,7 @@ inline void Scoreboard::rename_player(std::string &name,
  * @param rank Rank of player
  * @param num Number added to the player's score (can be negative)
  */
-inline void Scoreboard::add_pscore(int rank, int num)
+void Scoreboard::add_pscore(int rank, int num)
 {
 	debug_info();
 
@@ -414,7 +302,7 @@ inline void Scoreboard::add_pscore(int rank, int num)
  * @param name Name of the player
  * @param num Number added to the player's score (can be negative)
  */
-inline void Scoreboard::add_pscore(std::string &name, int num)
+void Scoreboard::add_pscore(std::string &name, int num)
 {
 	debug_info();
 
@@ -436,7 +324,7 @@ inline void Scoreboard::add_pscore(std::string &name, int num)
  * @brief Resets player's score to 0
  * @param rank Player's rank
  */
-inline void Scoreboard::reset_pscore(int rank)
+void Scoreboard::reset_pscore(int rank)
 {
 	debug_info();
 
@@ -453,7 +341,7 @@ inline void Scoreboard::reset_pscore(int rank)
  * @brief Resets player's score to 0
  * @param name Player's name
  */
-inline void Scoreboard::reset_pscore(std::string &name)
+void Scoreboard::reset_pscore(std::string &name)
 {
 	debug_info();
 
@@ -465,24 +353,11 @@ inline void Scoreboard::reset_pscore(std::string &name)
 
 	sort_scb();					// need to sort again
 }
-
-/**
- * @brief Resets score of all players to zero
- */
-inline void Scoreboard::reset_score()
-{
-	debug_info();
-
-	for (auto it = players.begin(); it != players.end(); it++)
-		it->second = 0;
-
-	sort_scb();					// need to sort again
-}
-		
+	
 /**
  * @brief TODO
  */
-inline bool Scoreboard::save_to_file(std::ostream file)
+bool Scoreboard::save_to_file(std::ostream file)
 {
 	debug_info();
 	
@@ -494,7 +369,7 @@ inline bool Scoreboard::save_to_file(std::ostream file)
 /**
  * @brief TODO
  */
-inline bool Scoreboard::load_players_from_file(std::istream file)
+bool Scoreboard::load_players_from_file(std::istream file)
 {
 	debug_info();
 	
@@ -506,7 +381,7 @@ inline bool Scoreboard::load_players_from_file(std::istream file)
 /**
  * @brief TODO
  */
-inline bool Scoreboard::load_history(std::istream file)
+bool Scoreboard::load_history(std::istream file)
 {
 	debug_info();
 
@@ -528,7 +403,7 @@ inline bool Scoreboard::load_history(std::istream file)
  * | 23.	| Kentril										| -20		   |
  *  -----------------------------------------------------------------------
  */
-inline void Scoreboard::print(std::ostream & strm)
+void Scoreboard::print(std::ostream & strm)
 {
 	debug_info();
 
@@ -557,7 +432,7 @@ inline void Scoreboard::print(std::ostream & strm)
  * @brief Sorts the scoreboard players based on their score using
  *	set structure descending and aplhabetically when scores match
  */
-inline void Scoreboard::sort_scb()
+void Scoreboard::sort_scb()
 {
 	debug_info();
 
