@@ -115,11 +115,12 @@ void Scoreboard::add_player(const std::string &name, int score)
 
 	std::ostringstream aux;
 	// checking uniqueness of player's name
-	std::map<char *, int>::const_iterator it = players.find(p_name);
+	std::map<char *, int>::iterator it = players.find(p_name);
 	for (int i = 1; it != players.end(); i++)
 	{
+		std::cout << "STR: " << it->first << std::endl;
 		aux.clear();
-		aux << "(" << i << ")";				// max (65534)
+		aux << "(" << i << ")";						// max (65534)
 		std::strcpy(null_pos, aux.str().c_str());	// appending (N) 
 		it = players.find(p_name);
 	}
@@ -420,8 +421,12 @@ void Scoreboard::print(std::ostream & strm)
 	int i = 1;
 	for (auto it = pl_sort.begin(); it != pl_sort.end(); it++)
 	{
-		strm << "| " << i << ".\t| " << it->first << " " << 
-			std::string(w.ws_col-19-strlen(it->first), ' ') << "| " << 
+		strm << "| " << i;
+		// just one or two digits
+		(i < 100) ? strm << ".\t | " : strm <<  ".\t| ";
+
+		strm << it->first << " " << 
+			std::string(w.ws_col-21-strlen(it->first), ' ') << "| " << 
 			it->second << "\t|" << std::endl;
 		LINE_BREAK;
 		i++;
@@ -451,6 +456,7 @@ void Scoreboard::sort_scb()
 //	std::transform(players.begin(), players.end(), std::inserter(pl_sort, 
 //		pl_sort.begin()), compFunctor);
 
+	pl_sort.clear();
 
 	std::copy(players.begin(), players.end(),
 		std::back_inserter<std::vector<std::pair<char *, int>>>(pl_sort));
