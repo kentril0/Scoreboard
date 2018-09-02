@@ -26,7 +26,7 @@
 
 #else
 #define debug_msg(x) do { std::cerr << __FUNCTION__ << ": " <<			\
-								__LINE__ << ": " << x << std::endl; 	\
+						__LINE__ << ": |" << x << "|" << std::endl; 	\
 						} while(0)
 
 #define debug_info() do { std::cerr << __FUNCTION__ << ": " <<			\
@@ -67,8 +67,8 @@ enum Consts
 	WIN_PADDING = 32		// window padding
 };
 
-
-typedef std::map<char *, int>::iterator Pl_it;
+// TODO
+typedef std::map<std::string, int>::iterator Pl_it;
 
 
 /**
@@ -163,12 +163,12 @@ inline void Player::dec_score()
 // ----------------------------------------------------------------------
 
 /**
- * @brief TODO
+ * @brief Scoreboard class
  */
 class Scoreboard
 {
-		std::map<char *, int> players;	//< map of player names and scores
-		std::vector<std::pair<char *, int>> pl_sort;
+		std::map<std::string, int> players;	//< map of names and scores
+		std::vector<std::pair<std::string, int>> pl_sort;
 		int show_max;				///< How many players are shown
 		unsigned int max_players;	///< Max. players to save info about
 		std::filebuf save_f;		///< Can be printed to a file
@@ -184,20 +184,21 @@ class Scoreboard
 		void set_max_players(int num);
 
 		// player modification methods
-		void add_player(const std::string &name = "", int score = 0);
+		void add_player(const std::string &name = "Player", int score = 0);
 
 		void rm_player(int rank);
-		void rm_player(std::string &name);
+		void rm_player(const std::string &name);
 		void rm_players();
 
-		void rename_player(int rank, std::string &new_name);
-		void rename_player(std::string &name, std::string &new_name);
+		void rename_player(int rank, const std::string &new_name);
+		void rename_player(const std::string &name, 
+							const std::string &new_name);
 
 		// score modification methods
 		void add_pscore(int rank, int num = 1);
-		void add_pscore(std::string &name, int num = 1);
+		void add_pscore(const std::string &name, int num = 1);
 		void reset_pscore(int rank);
-		void reset_pscore(std::string &name);
+		void reset_pscore(const std::string &name);
 		void reset_score();
 		
 		bool save_to_file(std::ostream file);
@@ -210,7 +211,7 @@ class Scoreboard
 	private:
 		void sort_scb();				// sorting function for set pl_sort
 		Pl_it get_player(int rank);
-		Pl_it get_player(std::string &name);
+		Pl_it get_player(const std::string &name);
 };
 
 /**
@@ -240,10 +241,25 @@ inline Pl_it Scoreboard::get_player(int rank)
 	if ( (rank < 1) || (static_cast<unsigned int>(rank) > players.size()))	
 		report_err("Incorrect player rank", players.end());
 	
-	std::vector<std::pair<char *, int>>::iterator it = 
+	std::vector<std::pair<std::string, int>>::iterator it = 
 		std::next(pl_sort.begin(), rank-1);
 	
 	return players.find(it->first);
+}
+
+/**
+ * @brief Gets a pointer reference to a player using his name
+ * @param name Player's identifiable name
+ * @param Pointer to the player iterator
+ */
+inline Pl_it Scoreboard::get_player(const std::string &name)
+{
+	debug_info();
+
+	if (name.empty() || name.length() > PNAME_LIMIT)
+		return players.end();
+
+	return players.find(name);
 }
 
 /**
@@ -252,10 +268,6 @@ inline Pl_it Scoreboard::get_player(int rank)
 inline void Scoreboard::rm_players()
 {
 	debug_info();
-
-	for (std::map<char *, int>::iterator it = players.begin(); 
-		it != players.end(); it++)
-		delete [](it->first);				// delete alloc. strings
 
 	players.clear();
 	pl_sort.clear();
