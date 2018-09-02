@@ -58,7 +58,7 @@ static void split_str(std::string &str)
 			j += ++i; i = -1;			// moves j, resets i
 		}
 	}
-	aux = str.substr(j, i);
+	aux = str.substr(j, i);			// without newline
 	if (aux.length())
 		v_exstr.push_back(aux);
 }
@@ -248,8 +248,13 @@ void uc_player()
  */
 void sc_add_p()
 {
+	debug_info();
+
 	switch(v_exstr.size())
 	{
+		case 2:			// player add
+			scb.add_player();
+			break;
 		case 3:			// player add <name>
 			scb.add_player(v_exstr[2]);
 			break;
