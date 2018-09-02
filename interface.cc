@@ -325,7 +325,7 @@ void uc_win()
 	if (v_exstr.size() != 2)
 		report_err("Unknown subcommand", void());
 
-	if (is_num_only(v_exstr[2]))
+	if (is_num_only(v_exstr[1]))
 		scb.add_pscore(std::stoi(v_exstr[1]));
 	else
 		scb.add_pscore(v_exstr[1]);
@@ -342,7 +342,7 @@ void uc_loss()
 	if (v_exstr.size() != 2)
 		report_err("Unknown subcommand", void());
 
-	if (is_num_only(v_exstr[2]))
+	if (is_num_only(v_exstr[1]))
 		scb.add_pscore(std::stoi(v_exstr[1]), -1);
 	else
 		scb.add_pscore(v_exstr[1], -1);
