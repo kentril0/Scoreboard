@@ -2,7 +2,7 @@
  * @file interface.cc
  * @date 31.08.2018
  * @author Kentril Despair
- * @brief
+ * @brief TODO
  *
  */
 
@@ -15,7 +15,7 @@
 
 static std::vector<std::string> v_exstr;
 static std::unordered_map<std::string, user_cmnds> m_cmd_parse;
-static Scoreboard scb;
+Scoreboard scb;
 
 /**
  * @brief Initializes map 
@@ -31,8 +31,8 @@ static std::unordered_map<std::string, user_cmnds> m_cmd_init()
 		{"save", UC_SAVE}, {"load", UC_LOAD}, {"add", SC_ADD}, 
 		{"remove", SC_REMOVE}, {"rename", SC_RENAME}, {"reset", SC_RESET}, 
 		{"max", SC_MAX}, {"file", SC_FILE}, {"history", SC_HISTORY}, 
-		{"players", SC_PLAYERS}, {"all", SC_ALL}}
-	);
+		{"players", SC_PLAYERS}, {"all", SC_ALL}, {"help", UC_HELP},
+		{"exit", UC_EXIT}});
 
 	return m_aux;
 }
@@ -471,6 +471,11 @@ int run_scb(int argc, char *argv[])
 			case UC_LOAD:
 				uc_load();
 				break;
+			case UC_HELP:
+				std::cout << help_cmdl << std::endl;
+				break;
+			case UC_EXIT:
+				return EXIT_SUCCESS;
 			default:
 				debug_msg("default");
 				std::cerr << "Error: No known command" << std::endl;
