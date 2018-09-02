@@ -98,60 +98,19 @@ void Scoreboard::add_player(const std::string &name, int score)
 	if (name.length() > MAX_PNAME)			// max limit of chars exceeded
 		report_err("Player name too long, maximum 32 characters!", void());
 
-	char *p_name = new char[MAX_PNAME]();	// TODO exceptions
-	std::memset(p_name, '\0', MAX_PNAME);
-	char *null_pos;							// pointer to null position
-
-	if (name.empty())	// default used - generate name
-	{
-		std::strcpy(p_name, "Player");
-		null_pos = &p_name[6];
-	}
-	else				// copy name
-	{
-		std::strcpy(p_name, name.c_str());
-		null_pos = &p_name[name.length()];	// TODO check
-	}
-
 	std::ostringstream aux;
 	// checking uniqueness of player's name
-	std::map<char *, int>::iterator it = players.find(p_name);
+	std::map<std::string, int>::iterator it = players.find(name);
 	for (int i = 1; it != players.end(); i++)
 	{
-		std::cout << "STR: " << it->first << std::endl;
 		aux.clear();
-		aux << "(" << i << ")";						// max (65534)
-		std::strcpy(null_pos, aux.str().c_str());	// appending (N) 
-		it = players.find(p_name);
+		aux << name << "(" << i << ")";		// max (65534)
+		it = players.find(aux.str());
 	}
 
-	players[p_name] = score;				// adding player
+	players[aux.str()] = score;				// adding player
 
 	sort_scb();								// need to sort
-}
-
-/**
- * @brief Gets a pointer reference to a player using his name
- * @param name Player's identifiable name
- * @return Pointer to the player iterator
- */ 
-Pl_it Scoreboard::get_player(std::string &name)
-{
-	debug_info();
-
-	if (name.empty() || name.length() > PNAME_LIMIT)
-		return players.end();
-
-	char *aux_str = new char[name.length()+1]();	// const problems
-	std::strcpy(aux_str, name.c_str());
-
-	Pl_it it = players.find(aux_str);
-	delete [](aux_str);
-	if (it != players.end())
-		return it;
-
-	report_war("Player with that name does not exist");
-	return players.end();
 }
 
 /**
@@ -166,33 +125,27 @@ void Scoreboard::rm_player(int rank)
 	if (rank < 1 || (static_cast<unsigned int>(rank) > players.size()))
 		report_err("Incorrect player rank", void());
 	
-	std::vector<std::pair<char *, int>>::iterator it = 
+	std::vector<std::pair<std::string, int>>::iterator it = 
 		std::next(pl_sort.begin(), rank-1);
 	
-	delete [](it->first);					// free the mem TODO check
 	players.erase(it->first);
-	pl_sort.erase(it);						// TODO sort again??
+	pl_sort.erase(it);						// TODO sort again?? or only?
 }
 
 /**
  * @brief Removes a player with a certain name
  * @param Name of the player to be removed
  */
-void Scoreboard::rm_player(std::string &name)
+void Scoreboard::rm_player(const std::string &name)
 {
 	debug_info();
 
 	if (name.empty())
 		return;
-	
-	char *aux_str = new char[name.length()+1]();	// const problems
-	std::strcpy(aux_str, name.c_str());
 
-	Pl_it it = players.find(aux_str);
-	delete [](aux_str);
+	Pl_it it = players.find(name);
 	if (it != players.end())
 	{
-		delete [](it->first);
 		players.erase(it);
 		sort_scb();
 		return;
@@ -207,7 +160,7 @@ void Scoreboard::rm_player(std::string &name)
  * @param rank Rank of the player whoose name will be changed
  * @param new_name New name of the player
  */
-void Scoreboard::rename_player(int rank, std::string &new_name)
+void Scoreboard::rename_player(int rank, const std::string &new_name)
 {
 	debug_info();
 
@@ -216,25 +169,23 @@ void Scoreboard::rename_player(int rank, std::string &new_name)
 
 	Pl_it it = get_player(rank);	// checking rank
 	if (it == players.end())
-		return;
+		report_err("Player with that rank does not exist", void());
 
 	// checking uniqueness of player's name
-	char *aux_str = new char[PNAME_LIMIT]();	// const problems
-	std::memset(aux_str, '\0', MAX_PNAME);
-	std::strcpy(aux_str, new_name.c_str());
-
 	std::ostringstream aux;
-	std::map<char *, int>::iterator a_it = players.find(aux_str);
+	std::map<std::string, int>::iterator a_it = players.find(new_name);
 	for (int i = 1; a_it != players.end(); i++)
 	{
 		aux.clear();
-		std::memset(aux_str, '\0', MAX_PNAME);
 		aux << new_name << "(" << i << ")";
-		std::strcpy(aux_str, aux.str().c_str());
-		a_it = players.find(aux_str);
+		a_it = players.find(aux.str());
 	}
 
-	std::strcpy(it->first, aux_str);		// copy name over
+	// overwrite key
+	auto nodeHandler = players.extract(it);	// detaches node
+	nodeHandler.key() = aux.str();			// changes key
+	players.insert(std::move(nodeHandler));	// inserts back the node
+
 	sort_scb();								// need to sort
 }
 
@@ -243,8 +194,8 @@ void Scoreboard::rename_player(int rank, std::string &new_name)
  * @param name Name of the player to be renamed
  * @param new_name A new name for the player
  */
-void Scoreboard::rename_player(std::string &name, 
-										std::string &new_name)
+void Scoreboard::rename_player(const std::string &name, 
+								const std::string &new_name)
 {
 	debug_info();
 
@@ -253,25 +204,23 @@ void Scoreboard::rename_player(std::string &name,
 
 	Pl_it it = get_player(name);		// checking name
 	if (it == players.end())
-		return;
+		report_err("Player with that name does not exist", void());
 
 	// checking uniqueness of player's name
-	char *aux_str = new char[PNAME_LIMIT]();	// const problems
-	std::memset(aux_str, '\0', MAX_PNAME);
-	std::strcpy(aux_str, new_name.c_str());
-
 	std::ostringstream aux;
-	std::map<char *, int>::iterator a_it = players.find(aux_str);
+	std::map<std::string, int>::iterator a_it = players.find(new_name);
 	for (int i = 1; a_it != players.end(); i++)
 	{
 		aux.clear();
-		std::memset(aux_str, '\0', MAX_PNAME);
 		aux << new_name << "(" << i << ")";
-		std::strcpy(aux_str, aux.str().c_str());
-		a_it = players.find(aux_str);
+		a_it = players.find(aux.str());
 	}
 
-	std::strcpy(it->first, aux_str);		// copy name over
+	// overwrite key
+	auto nodeHandler = players.extract(it);	// detaches node
+	nodeHandler.key() = aux.str();			// changes key
+	players.insert(std::move(nodeHandler));	// inserts back the node
+
 	sort_scb();								// need to sort
 }
 
@@ -286,7 +235,7 @@ void Scoreboard::add_pscore(int rank, int num)
 
 	auto it = get_player(rank);
 	if (it == players.end())
-		return;
+		report_err("Player with that rank does not exist", void());
 
 	if (num > MAX_SCORE)		
 		num = MAX_SCORE;		// automatically sets to upper limit
@@ -303,13 +252,13 @@ void Scoreboard::add_pscore(int rank, int num)
  * @param name Name of the player
  * @param num Number added to the player's score (can be negative)
  */
-void Scoreboard::add_pscore(std::string &name, int num)
+void Scoreboard::add_pscore(const std::string &name, int num)
 {
 	debug_info();
 
 	auto it = get_player(name);
 	if (it == players.end())
-		return;
+		report_err("Player with that name does not exist", void());
 
 	if (num > MAX_SCORE)		
 		num = MAX_SCORE;		// automatically sets to upper limit
@@ -331,7 +280,7 @@ void Scoreboard::reset_pscore(int rank)
 
 	auto it = get_player(rank);
 	if (it == players.end())
-		return;
+		report_err("Player with that rank does not exist", void());
 
 	it->second = 0;
 
@@ -342,13 +291,13 @@ void Scoreboard::reset_pscore(int rank)
  * @brief Resets player's score to 0
  * @param name Player's name
  */
-void Scoreboard::reset_pscore(std::string &name)
+void Scoreboard::reset_pscore(const std::string &name)
 {
 	debug_info();
 
 	auto it = get_player(name);
 	if (it == players.end())
-		return;
+		report_err("Player with that name does not exist", void());
 
 	it->second = 0;
 
@@ -426,7 +375,7 @@ void Scoreboard::print(std::ostream & strm)
 		(i < 100) ? strm << ".\t | " : strm <<  ".\t| ";
 
 		strm << it->first << " " << 
-			std::string(w.ws_col-21-strlen(it->first), ' ') << "| " << 
+			std::string(w.ws_col-21-(it->first).length(), ' ') << "| " << 
 			it->second << "\t|" << std::endl;
 		LINE_BREAK;
 		i++;
@@ -459,11 +408,12 @@ void Scoreboard::sort_scb()
 	pl_sort.clear();
 
 	std::copy(players.begin(), players.end(),
-		std::back_inserter<std::vector<std::pair<char *, int>>>(pl_sort));
+		std::back_inserter<std::vector<std::pair<std::string,
+													int>>>(pl_sort));
 
 	std::sort(pl_sort.begin(), pl_sort.end(), 
-				[](std::pair<char *, int> const &a, 
-					std::pair<char *, int> const &b)
+				[](std::pair<std::string, int> const &a, 
+					std::pair<std::string, int> const &b)
 					{
 						return a.second != b.second ? a.second > b.second :
 											a.first < b.first;
