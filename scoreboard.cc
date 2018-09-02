@@ -99,11 +99,12 @@ void Scoreboard::add_player(const std::string &name, int score)
 		report_err("Player name too long, maximum 32 characters!", void());
 
 	std::ostringstream aux;
+	aux << name;
 	// checking uniqueness of player's name
 	std::map<std::string, int>::iterator it = players.find(name);
 	for (int i = 1; it != players.end(); i++)
 	{
-		aux.clear();
+		aux.str(std::string());				// clear aux
 		aux << name << "(" << i << ")";		// max (65534)
 		it = players.find(aux.str());
 	}
@@ -173,10 +174,11 @@ void Scoreboard::rename_player(int rank, const std::string &new_name)
 
 	// checking uniqueness of player's name
 	std::ostringstream aux;
+	aux << new_name;
 	std::map<std::string, int>::iterator a_it = players.find(new_name);
 	for (int i = 1; a_it != players.end(); i++)
 	{
-		aux.clear();
+		aux.str(std::string());				// clear aux
 		aux << new_name << "(" << i << ")";
 		a_it = players.find(aux.str());
 	}
@@ -208,10 +210,11 @@ void Scoreboard::rename_player(const std::string &name,
 
 	// checking uniqueness of player's name
 	std::ostringstream aux;
+	aux << new_name;
 	std::map<std::string, int>::iterator a_it = players.find(new_name);
 	for (int i = 1; a_it != players.end(); i++)
 	{
-		aux.clear();
+		aux.str(std::string());				// clear aux
 		aux << new_name << "(" << i << ")";
 		a_it = players.find(aux.str());
 	}
