@@ -64,7 +64,7 @@ enum Consts
 	PNAME_LIMIT = 40,		// hard limit, also true size of string
 
 	// terminal constants
-	WIN_PADDING = 29		// window padding
+	WIN_PADDING = 32		// window padding
 };
 
 

@@ -394,7 +394,7 @@ bool Scoreboard::load_history(std::istream file)
  * @brief Prints the actual scores, players and ranking
  * 	Layout:
  *  _______________________________________________________________________
- * | RANK	| PLAYER NAME									| SCORE		   |
+ * | RANK   | PLAYER NAME									| SCORE		   |
  *	-----------------------------------------------------------------------
  * | 1.		| Dudefish										| 22		   |
  * .
@@ -412,7 +412,7 @@ void Scoreboard::print(std::ostream & strm)
 
 	// printing header TODO consider using std AFTER to check any problems
 	strm << " " << std::string(w.ws_col-2, '_') << std::endl <<
-		"| RANK\t| PLAYER NAME " <<
+		"| RANK   | PLAYER NAME " <<
 		std::string(w.ws_col-WIN_PADDING, ' ') << "| SCORE |" << std::endl;
 
 	LINE_BREAK;
@@ -420,9 +420,9 @@ void Scoreboard::print(std::ostream & strm)
 	int i = 1;
 	for (auto it = pl_sort.begin(); it != pl_sort.end(); it++)
 	{
-		strm << "| " << i << ".\t|" << it->first << " " << 
+		strm << "| " << i << ".\t| " << it->first << " " << 
 			std::string(w.ws_col-19-strlen(it->first), ' ') << "| " << 
-			it->second << " |" << std::endl;
+			it->second << "\t|" << std::endl;
 		LINE_BREAK;
 		i++;
 	}
