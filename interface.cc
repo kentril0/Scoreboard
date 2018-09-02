@@ -158,6 +158,7 @@ void uc_score()
 				sc_add_sc();	// "score add (<name> | <rank>) <number>"
 				return;
 			}
+			[[fallthrough]];	// C++17 
 		default:
 			report_err("Unknown subcommand", void());
 	}
@@ -264,6 +265,7 @@ void sc_add_p()
 				scb.add_player(v_exstr[2], std::stoi(v_exstr[3]));
 				break;
 			}
+			[[fallthrough]];	// C++17 
 		default:
 			report_err("Unknown subcommand", void());
 	}
@@ -284,6 +286,7 @@ void sc_remove()
 				scb.rm_players();
 				break;
 			}
+			[[fallthrough]];	// C++17 
 		case 4:			// player remove (<name> | <rank>)
 			if (is_num_only(v_exstr[3]))
 				scb.rm_player(std::stoi(v_exstr[3]));
@@ -364,12 +367,14 @@ void uc_set()
 				scb.set_show_max(std::stoi(v_exstr[2]));
 				break;
 			}
+			[[fallthrough]];	// C++17 
 		case SC_MAX:
 			if (is_num_gen(v_exstr[2]))
 			{
 				scb.set_max_players(std::stoi(v_exstr[2]));
 				break;
 			}
+			[[fallthrough]];	// C++17 
 		default:
 			report_err("Unknown subcommand", void());
 	}
