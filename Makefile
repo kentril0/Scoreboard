@@ -1,19 +1,27 @@
-##############
+#########################
 # file: Makefile
 # date: 25.8.2018
 # author: Kentril Despair
 # version: 1.0
-# brief:
-##############
+# brief: TODO
+########################
 
-CPPFLAGS=-std=c++14 -pedantic -Wall -Wextra -Werror
+CPPFLAGS=-std=c++17 -pedantic -Wall -Wextra -Werror -D DEBUG
 CXX=g++
 
+# scoreboard project
 PROJECT=scoreboard
 HEADER=scoreboard.h
 SOURCE=scoreboard.cc
-OBJECTS=scoreboard.o main.o
 
+# interface
+INTFC_S=interface.cc
+INTFC_H=interface.h
+
+OBJECTS=scoreboard.o interface.o main.o
+
+# -------------------------------------------------------------------------
+# main label
 all: ${PROJECT}
 
 ${PROJECT}: ${OBJECTS}
@@ -22,7 +30,10 @@ ${PROJECT}: ${OBJECTS}
 scoreboard.o: ${SOURCE} ${HEADER}
 	${CXX} ${CPPFLAGS} $< -c
 
-main.o: main.cc ${HEADER}
+interface.o: ${INTFC_S} ${INTFC_H} ${HEADER}
+	${CXX} ${CPPFLAGS} $< -c
+
+main.o: main.cc ${INTFC_H}
 	${CXX} ${CPPFLAGS} $< -c
 
 
