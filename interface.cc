@@ -278,24 +278,21 @@ void sc_add_p()
  */
 void sc_remove()
 {
-	switch(v_exstr.size())
-	{
-		case 3:			// player remove all
-			if (m_cmd_parse[v_exstr[2]] == SC_ALL)
-			{
-				scb.rm_players();
-				break;
-			}
-			[[fallthrough]];	// C++17 
-		case 4:			// player remove (<name> | <rank>)
-			if (is_num_only(v_exstr[3]))
-				scb.rm_player(std::stoi(v_exstr[3]));
-			else
-				scb.rm_player(v_exstr[3]);
+	debug_info();
+	
+	if (v_exstr.size() != 3)
+		report_err("Unknown subcommand", void());
 
-			break;
-		default:
-			report_err("Unknown subcommand", void());
+	// player remove all
+	if (m_cmd_parse[v_exstr[2]] == SC_ALL)
+		scb.rm_players();
+	else
+	{
+		// player remove (<name> | <rank>)
+		if (is_num_only(v_exstr[2]))
+			scb.rm_player(std::stoi(v_exstr[2]));
+		else
+			scb.rm_player(v_exstr[2]);
 	}
 }
 
