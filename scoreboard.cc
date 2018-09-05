@@ -9,7 +9,6 @@
 
 #include "scoreboard.h"
 #include <algorithm>
-#include <cstring>
 #include <sstream>		// std::ostringstream
 #include <sys/ioctl.h>	// get terminal
 #include <unistd.h>
@@ -17,59 +16,58 @@
 
 /* ------------------------------------------------------------ */
 
-/**
- * @brief Implicit constructor of Scoreboard
- *	Based on defined arguments an output mode is devised:
- *	If s_f is not empty string than -> saving to a file instead of std out.
- * TODO
- * @param plyrs Number of players to initialze vector with
- * @param s_max Number of players shown at a time in a table
- * @param m_plyrs Maximum number of players that can be created
- * @param s_f Name of a file to which the table is saved instead of output
- * @param s_hf Name of a history file from which previous infomation is
- *				loaded.
- */
-Scoreboard::Scoreboard(int plyrs, int s_max,
-							int m_plyrs, 
-							const std::string &s_f, 
-							const std::string &s_hf)
-{
-	debug_msg("max show: " << s_max);
-	debug_msg("limit: " << m_plyrs);
-
-	if (plyrs > m_plyrs)
-	{
-		report_war("Only " << m_plyrs << " players will be created, change"
-			" this limit later: set plimit N, where N is the new limit");
-		plyrs = m_plyrs;
-	}
-
-	// init vector of players to plyrs number of players
-	for(int i = 0; i < plyrs; i++)
-		add_player();
-
-	// init 
-	show_max = s_max;			// maximum number of players shown 
-	max_players = m_plyrs;		// maximum players that can be created
 
 	// TODO mode file-saving if empty string
-	if (!s_f.empty())		// TODO exceptions
-		save_f.open(s_f, std::ios::out);	// initialize save file
+//	if (!s_f.empty())		// TODO exceptions
+//		save_f.open(s_f, std::ios::out);	// initialize save file
+//
+//	if (!s_hf.empty())
+//		h_file.open(s_hf, std::ios::out);	// initialize history file
 
-	if (!s_hf.empty())
-		h_file.open(s_hf, std::ios::out);	// initialize history file
+
+/**
+ * @brief Initializes scoreboard with number of players with default
+ *	names and scores
+ * @param num	Number of players to be initialized
+ */
+void Scoreboard::init_players(int num)
+{
+	// number of available players to be created
+	int avail_plrs = max_players - players.size();
+
+	if (num > avail_plrs)
+	{
+		report_war("Only " << avail_plrs << " players will be created, "
+					"change this limit later: set plimit N, where N is "
+					"the new limit");
+		num = avail_plrs;
+	}
+
+	std::ostringstream aux;
+
+	// init vector of players to plyrs number of players
+	for(int i = 1; i <= num; i++)
+	{	// optimized version of add_player() method
+		aux.str(std::string());				// clear aux
+		aux << "Player" << "(" << i << ")";
+		players[aux.str()] = 0;				// adding player
+	}
+
+	sort_scb();								// need to sort
+
+	std::cout << "Initialized with " << num << " players." << std::endl;
 }
 
 /**
  * @brief Sets maximum number of players that can be created
- * @param num Maximum number of shown players
+ * @param num Maximum number of players
  */
 void Scoreboard::set_max_players(int num)
 {
 	debug_info();
 
 	if (num < 0 || num > USHRT_MAX)	// hard limit 
-		report_err("Incorrect number of maximum players shown", void());
+		report_err("Incorrect number of maximum players", void());
 
 	int i = players.size()-1;
 	while (i > num)			// remove players above limit
@@ -79,6 +77,7 @@ void Scoreboard::set_max_players(int num)
 	}
 
 	max_players = num;
+	std::cout << "Player limit set to: " << max_players << std::endl;
 }
 
 /**
