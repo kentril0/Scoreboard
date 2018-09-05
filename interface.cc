@@ -12,10 +12,12 @@
 #include <cctype>
 #include <unordered_map>
 #include <algorithm>
+#include <sstream>
+
 
 static std::vector<std::string> v_exstr;
 static std::unordered_map<std::string, user_cmnds> m_cmd_parse;
-Scoreboard scb;
+static Scoreboard scb;
 
 /**
  * @brief Initializes map 
@@ -30,7 +32,7 @@ static std::unordered_map<std::string, user_cmnds> m_cmd_init()
 		{"win", UC_WIN}, {"loss", UC_LOSS}, {"set", UC_SET}, 
 		{"save", UC_SAVE}, {"load", UC_LOAD}, {"add", SC_ADD}, 
 		{"remove", SC_REMOVE}, {"rename", SC_RENAME}, {"reset", SC_RESET}, 
-		{"max", SC_MAX}, {"file", SC_FILE}, {"history", SC_HISTORY}, 
+		{"plimit", SC_MAX}, {"file", SC_FILE}, {"history", SC_HISTORY}, 
 		{"players", SC_PLAYERS}, {"all", SC_ALL}, {"help", UC_HELP},
 		{"exit", UC_EXIT}});
 
@@ -347,8 +349,8 @@ void uc_loss()
 
 /**
  * @brief "set" command, sets scoreboard variables
- *	set -> show <M>	- sets maximum number of shown players
- *	set -> max <N>	- sets maximum number of players
+ *	set -> show <M>		- sets maximum number of shown players
+ *	set -> plimit <N>	- sets maximum number of players
  */
 void uc_set()
 {
@@ -401,30 +403,72 @@ void uc_load()
  */
 void parse_args(int argc, char *argv[])
 {
+	Args s_args;	// struct args with parsed arguments
+	s_args.init_plrs = 0; 	// initialize with defaults
+	s_args.max_show = HGHT_LIMIT;
+	s_args.max_plrs = S_PLIMIT;
+	// TODO files
+
 	char c;
+	std::ostringstream aux;		// if optarg is number
 	while ((c = getopt(argc, argv, "p:s:m:f:h")) != -1)
 	{
+		aux.str(std::string());	// clear aux's string part
 		switch(c)
 		{
 			case 'p':
-				std::cout << "p arg: " << optarg << std::endl;
+				debug_msg("p arg: " << optarg);
+				aux << optarg;
+				if (!is_num_only(aux.str()))
+				{
+					std::cerr << "Error: -p argument wrong value" << 
+								std::endl;				
+					exit(EXIT_FAILURE);
+				}
+				s_args.init_plrs = std::stoi(aux.str());
 				break;
 			case 's':
-				std::cout << "s arg: " << optarg << std::endl;
+				debug_msg("s arg: " << optarg);
+				aux << optarg;
+				if (!is_num_gen(aux.str()))
+				{
+					std::cerr << "Error: -s argument wrong value" << 
+								std::endl;				
+					exit(EXIT_FAILURE);
+				}
+				s_args.max_show = std::stoi(aux.str());
 				break;
 			case 'm':
-				std::cout << "m arg: " << optarg << std::endl;
+				debug_msg("m arg: " << optarg);
+				aux << optarg;
+				if (!is_num_gen(aux.str()))
+				{
+					std::cerr << "Error: -m argument wrong value" << 
+								std::endl;				
+					exit(EXIT_FAILURE);
+				}
+				s_args.max_plrs = std::stoi(aux.str());
 				break;
 			case 'f':
 				std::cout << "f arg: " << optarg << std::endl;
 				break;
 			case 'h':
-				std::cout << "h arg: " << optarg << std::endl;
+				std::cout << "h arg " << std::endl;
 				break;
 			default:
 				std::cerr << "Error: Uknown command" << std::endl;
+				exit(EXIT_FAILURE);
 		}
 	}
+	// initializes scoreboard
+	if (s_args.max_show != HGHT_LIMIT)
+		scb.set_show_max(s_args.max_show);
+	
+	if (s_args.max_plrs != S_PLIMIT)
+		scb.set_max_players(s_args.max_plrs);
+
+	if (s_args.init_plrs != 0)
+		scb.init_players(s_args.init_plrs);
 }
 
 /**
@@ -435,8 +479,7 @@ int run_scb(int argc, char *argv[])
 	// TODO arguments
 	parse_args(argc, argv);
 		
-	// initializes scoreboard
-//	Scoreboard scb();
+	// TODO init files
 
 	// initializes map with strings and codes
 	m_cmd_parse = m_cmd_init();
