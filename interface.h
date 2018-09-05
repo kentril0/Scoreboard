@@ -42,7 +42,7 @@ enum user_cmnds
 
 // help message - command line
 const char *const help_cmdl = 
- "print | scoreboard | show | score		-> show current score\n"
+ "print | scoreboard | show | score\t- show current score\n"
  "player\t-> add [<name>] [<score>]\n"
  "\t-> remove ( <name> | <rank> )\n"
  "\t-> remove all\n"
@@ -52,14 +52,28 @@ const char *const help_cmdl =
  "\t-> reset all\n"
  "win\t-> <name> | <rank>\n"
  "loss\t-> <name> | <rank>\n"
- "set\t-> show <MAX_PLAYERS>\n"
- "\t-> max <PLAYERS>\n"
+ "set\t-> show <SHOW_PLAYERS>\n"
+ "\t-> plimit <MAX_PLAYERS>\n"
  "\t-> file <path_to_file_for_saving>\n"
  "save\t// nothing if save file path specified\n"
  "\t-> file <path_to_file_to_save>\n"
  "\t-> history <path_to_save_history_file>\n"
  "load\t-> history <path_to_history_file>\n"
- "\t-> players <path_to_players_name_file>\n";
+ "\t-> players <path_to_players_name_file>\n"
+ "help\t- show this message\n"
+ "exit\t- shuts down the scoreboard app\n";
+
+/**
+ * @brief Parsed commandline args are saved here
+ */
+struct Args
+{
+	int init_plrs;	///< Number of initial players
+	int max_show;	///< Number of maximum shown players
+	int max_plrs;	///< Player limit
+	char *sf_path;	///< Path to a save file
+	char *hf_path;	///< Path to a history file
+};
 
 int run_scb(int argc, char *argv[]);
 void parse_args(int argc, char *argv[]);
