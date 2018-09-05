@@ -4,7 +4,7 @@
  * @author Kentril Despair
  * @version 1.0
  * @brief Declarations of scoreboard program
- * 
+ * 	TODO
  */
 
 
@@ -18,7 +18,7 @@
 #include <vector>
 #include <functional>
 
-// debugging macro
+// debugging macros
 #ifndef DEBUG
 #define debug_msg(...)
 
@@ -26,11 +26,10 @@
 
 #else
 #define debug_msg(x) do { std::cerr << __FUNCTION__ << ": " <<			\
-						__LINE__ << ": |" << x << "|" << std::endl; 	\
-						} while(0)
+	__LINE__ << ": |" << x << "|" << std::endl; } while(0)
 
 #define debug_info() do { std::cerr << __FUNCTION__ << ": " <<			\
-								__LINE__ << std::endl; } while(0)
+							__LINE__ << std::endl; } while(0)
 
 #endif
 
@@ -44,7 +43,7 @@
 	std::endl;
 
 /**
- * @brief An enum for all constants
+ * @brief An enum for all constants used across the program
  */
 enum Consts
 {
@@ -52,7 +51,7 @@ enum Consts
 	S_PLIMIT = UCHAR_MAX,	// soft player limit
 	H_PLIMIT = USHRT_MAX,	// hard player limit
 
-	// that many players defined by the height of the terminal will be shown
+	// number of players shown, set by the current height of terminal
 	HGHT_LIMIT = -110,
 
 	// score limits
@@ -67,7 +66,7 @@ enum Consts
 	WIN_PADDING = 32		// window padding
 };
 
-// TODO
+// For convenience use, Player iterator type
 typedef std::map<std::string, int>::iterator Pl_it;
 
 
@@ -167,19 +166,20 @@ inline void Player::dec_score()
  */
 class Scoreboard
 {
-		std::map<std::string, int> players;	//< map of names and scores
-		std::vector<std::pair<std::string, int>> pl_sort;
+		///< map of player names and player scores
+		std::map<std::string, int> players;	
+		///< used for sorting and printing the output
+		std::vector<std::pair<std::string, int>> pl_sort;	
+
 		int show_max;				///< How many players are shown
 		unsigned int max_players;	///< Max. players to save info about
 		std::filebuf save_f;		///< Can be printed to a file
 		std::filebuf h_file;		///< History file saved players & scores
 	public:
-		// constructor
-		Scoreboard(int plyrs = 0, int s_max = HGHT_LIMIT, 
-					int m_plyrs = S_PLIMIT, 
-					const std::string &s_f = std::string(),
-					const std::string &s_hf = std::string());
-
+		// default constructor
+		Scoreboard(): show_max{HGHT_LIMIT}, max_players{S_PLIMIT} {}
+		
+		void init_players(int num);
 		void set_show_max(int num);
 		void set_max_players(int num);
 
@@ -207,9 +207,9 @@ class Scoreboard
 
 		void print(std::ostream & strm = std::cout);
 
-		~Scoreboard() {	rm_players(); }			// destructor
+		~Scoreboard() {	rm_players(); }	///< destructor
 	private:
-		void sort_scb();				// sorting function for set pl_sort
+		void sort_scb();				///< sorting function for vector
 		Pl_it get_player(int rank);
 		Pl_it get_player(const std::string &name);
 };
@@ -226,6 +226,7 @@ inline void Scoreboard::set_show_max(int num)
 		report_err("Incorrect number of maximum players shown", void());
 
 	show_max = num;
+	std::cout << "Player show limit set to: " << show_max << std::endl;
 }
 
 /**
