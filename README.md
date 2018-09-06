@@ -37,6 +37,7 @@ Extract into a dir and "install" using make command
 
 Shown when "./scoreboard --help | -h" used:  
 
+```
 ./scoreboard [-p P] [-s S] [-m M] [-sf file] [-hf histFile] [-h] [--help]  
 Options:  
  -p P		Initializes scoreboard with P players, where P is the number of   
@@ -48,6 +49,7 @@ Options:
  -hf file	Sets a path to a history file with printed scoreboard, data  
  			will load into the current scoreboard.  
  -h|--help	Shows this message.  
+```
 
 ### Notes:
  If both arguments "-p" and "-hf" are used and are valid, first players  
