@@ -40,22 +40,35 @@ enum user_cmnds
 	SC_ALL
 };
 
-// help message - command line
-const char *const help_cmdl = 
- "print | scoreboard | show | score\t- show current score\n"
+// help message usage
+const char *const help_usg =
+ "Usage: ./scoreboard [-p P] [-s S] [-m M] [-sf file] [-hf histFile] [-h] "
+ "[--help]\n"
+ "Options: \n"
+ " -p P      Initialzes scoreboard with P players, where P is the number\n"
+ "           of players, max being a set limit of players\n"
+ " -s S      Sets S players that will be shown when score table is print\n"
+ " -m M      Sets maximum number of players (Player limit)\n"
+ " -sf file  Sets a file path to a save file, scoreboard will now print \n"
+ "           to a file instead of STDOUT\n"
+ " -hf file  Sets a path to a history file with printed scoreboard, data\n"
+ "           will load into the current scoreboard\n"
+ " -h|--help Shows this message.\n";
+
+// help message - commands
+const char *const help_cmds = 
+ "print | scoreboard | show | score\t- show current score table\n"
  "player\t-> add [<name>] [<score>]\n"
- "\t-> remove ( <name> | <rank> )\n"
- "\t-> remove all\n"
- "\t-> rename ( <name> | <rank> ) <new_name>\n"
- "score\t-> add ( <name> | <rank> ) [<number>]\n"
- "\t-> reset ( <name> | <rank> )\n"
- "\t-> reset all\n"
+ "\t-> remove ( all | ( <name> | <rank> ) )\n"
+ "\t-> rename (<name> | <rank>) <new_name>\n"
+ "score\t-> add (<name> | <rank>) [<number>]\n"
+ "\t-> reset ( all  (<name> | <rank>) )\n"
  "win\t-> <name> | <rank>\n"
  "loss\t-> <name> | <rank>\n"
  "set\t-> show <SHOW_PLAYERS>\n"
  "\t-> plimit <MAX_PLAYERS>\n"
  "\t-> file <path_to_file_for_saving>\n"
- "save\t// nothing if save file path specified\n"
+ "save\t-> // nothing if save file path specified\n"
  "\t-> file <path_to_file_to_save>\n"
  "\t-> history <path_to_save_history_file>\n"
  "load\t-> history <path_to_history_file>\n"

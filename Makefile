@@ -6,7 +6,7 @@
 # brief: TODO
 ########################
 
-CPPFLAGS=-std=c++17 -pedantic -Wall -Wextra -Werror -D DEBUG
+CPPFLAGS=-std=c++17 -pedantic -Wall -Wextra -Werror
 CXX=g++
 
 # scoreboard project

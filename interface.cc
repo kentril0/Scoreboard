@@ -453,8 +453,8 @@ void parse_args(int argc, char *argv[])
 				std::cout << "f arg: " << optarg << std::endl;
 				break;
 			case 'h':
-				std::cout << "h arg " << std::endl;
-				break;
+				std::cout << help_usg << std::endl;
+				exit(EXIT_SUCCESS);
 			default:
 				std::cerr << "Error: Uknown command" << std::endl;
 				exit(EXIT_FAILURE);
@@ -516,7 +516,7 @@ int run_scb(int argc, char *argv[])
 				uc_load();
 				break;
 			case UC_HELP:
-				std::cout << help_cmdl << std::endl;
+				std::cout << help_cmds << std::endl;
 				break;
 			case UC_EXIT:
 				return EXIT_SUCCESS;

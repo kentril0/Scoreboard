@@ -1,89 +1,111 @@
 # Scoreboard
 
-A terminal like app, that shows a table with ranking, player names and player scores. Used for LAN parties or any competitions up to 65535 players.
+A text application for Unix based systems, that shows a table with ranking, 
+player names and player scores - a scoreboard. 
+Used for LAN parties or any competitions.
+Just a fun little application, one of my first C++ apps.
 
-Requirements
-TODO
-g++ version 7
+## Status
+ **File manipulation is not implemented yet.**
+ **Regular expression comparison for player names not implemented yet.**
 
-Installation
-TODO
+## Requirements
+* g++ min. version 7 (C++17)
+* Makefile
 
-Commandline arguments
-Usage: ./scoreboard [-p P] [-s S] [-m M] [-sf file] [-hf histFile] [-h] [--help]
+## Installation
+Extract into a dir and "install" using make command
+
+## Commandline Usage
+
+Shown when "./scoreboard --help | -h" used:
+
+./scoreboard [-p P] [-s S] [-m M] [-sf file] [-hf histFile] [-h] [--help]
 Options:
- -p P		Initializes scoreboard P players, where P is number of players,
- 			max being a set limit of players.
+ -p P		Initializes scoreboard with P players, where P is the number of 
+ 			players, max being a set limit of players.
  -s S		Sets S players that will be shown when score table is print.
  -m M		Sets maximum number of players (Player limit).
  -sf file 	Sets a file path to a save file, scoreboard will now print to 
  			a file instead of STDOUT.
  -hf file	Sets a path to a history file with printed scoreboard, data
- 			will load into current scoreboard.
- -h/--help	Shows this message.
+ 			will load into the current scoreboard.
+ -h|--help	Shows this message.
 
-Notes:
+### Notes:
  If both arguments "-p" and "-hf" are used and are valid, first players
  are initialized and after then the history file is loaded, but players
  are added only up to the current available limit.
 
-Scoreboard Commands
-// TODO sync with real 
+## Scoreboard Commands
+
 print | scoreboard | show | score	- shows current score table
 player 	-> add [<name>] [<score>]
-		-> remove -> all | (<name> | <rank>)
-		-> rename -> (<name> | <rank>) <new_name>
-score	-> add 	-> (<name> | <rank>) [<number>]
-		-> reset -> all | (<name> | <rank>)
+		-> remove ( all | (<name> | <rank>) )
+		-> rename (<name> | <rank>) <new_name>
+score	-> add (<name> | <rank>) [<number>]
+		-> reset ( all | (<name> | <rank>) )
 win		-> <name> | <rank>
 loss	-> <name> | <rank>
-set		-> show <M>
-		-> plimit <N>
-		-> file <path_to_file>
-save	// nothing if file specified
-		-> <path_to_file>
-		-> history -> <path_to_file>
-load	-> history -> <path_to_file>
-		-> players -> <path_to_file>
+set		-> show <SHOW_PLAYERS>
+		-> plimit <MAX_PLAYERS>
+		-> file <path_to_file_for_saving>
+save	-> // nothing if file specified
+		-> <path_to_file_to_save>
+		-> history <path_to_save_history_file>
+load	-> history <path_to_history_file>
+		-> players <path_to_player_name_file>
 help	- shows this message
 exit	- shuts down the scoreboard app
 
 
-Comments
+## Limits
+1. Number of players and limit
+	- by default 0 players are created
+	- by default soft limit of players is 255
+	- by default hard limit of players is 65535 (unsigned short)
+	- players can be initialized with default names and scores (Player, 0)
+		with commandline option "-p P" up to the set limit
+	- limit can be set using commandline option "-m M" or using 
+		command "set plimit <MAX_PLAYERS>"
 
-FIRST PROTOTYPE THEN OPTIMITZE
-- string to char*
-- remove Player class and move it to Scoreboard class
-- debug messages to each Scoreboard function
+2. Number of shown players
+	- affects output of scoreboard, shows only first N players, where N
+		is the limit of players that can be shown
+	- by default shows all players
+	- can be set only up to the hard limit of players
 
-Maximum players shown
-MAX_INT
+3. Player name
+	- maximum length of 32 characters
+	- regular expression: ^([a-z]|[A-Z]|[0-9]|[_@$*-])*$
+	- if no name provided, player with a default name is created
+
+4. Player rank
+	- player can be referenced by name or by rank - position in the 
+		scoreboard
+	- can be only positive number
+
+4. Player score
+	- by default is set to 0
+	- can be in range from -9999 to 9999 
+
+
+## Comments
 
 Maximum players
-MAX_INT
 soft limit - 255, can be changed
 - When setting a limit players above the limit will be deleted automatically
 
 Player Names
-^([a-z]|[A-Z]|[0-9]|[_@$*-])*$
 max - 32 chars + possible chars (N), N up to 65534 and \0 -> 8
-(1)Player -> 40 chars hard limit
+Player(1) -> 40 chars hard limit
 		 11111111112222222222333
 12345678901234567890123456789012
 if no name provided, a name will be generated automatically in a format:
-	"Player_%d", N
-- is unique, if name already there, (N) is prepended, where N is 
+	"Player(%d)", N
+- is unique, if name already there, (N) is appended
 
-
+### TODO 
 TODO exceptions
-TODO 
-sizeof class Player vs sizeof struct Player
-unordered map -> presypat do  vec
-
-Unordered map -> key = char *, int score	- uniqueness, access
-vector -> key = int score, char *			- sorting, rank access
-
-Player - struct, pointers
-safety later - like const poiknters atd.
 no repetition of code -> make macros or functions rather
 todo includes
