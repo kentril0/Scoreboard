@@ -6,7 +6,7 @@ Used for LAN parties or any competitions.
 Just a fun little application, one of my first C++ apps.
 
 ## Status
- **File manipulation is not implemented yet.**
+ **File manipulation is not implemented yet.**  
  **Regular expression comparison for player names not implemented yet.**
 
 ## Requirements
