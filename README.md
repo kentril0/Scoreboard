@@ -5,9 +5,10 @@ player names and player scores - a scoreboard.
 Used for LAN parties or any competitions.
 Just a fun little application, one of my first C++ apps.  
 
-##Example of output
-  
-  ________________________________________________________________________  
+## Example of output 
+
+```
+________________________________________________________________________  
  | RANK   | PLAYER NAME                                          | SCORE  |  
   ------------------------------------------------------------------------  
  | 1.     | Valmir                                               | 50     |   ------------------------------------------------------------------------
@@ -18,6 +19,7 @@ Just a fun little application, one of my first C++ apps.
  | 4.     | Wormik                                               | 23     |
   ------------------------------------------------------------------------
 
+```
 
 ## Status
  **File manipulation is not implemented yet.**  
