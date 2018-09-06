@@ -75,24 +75,21 @@ static bool is_num_gen(const std::string &s)
 {
 	debug_info();
 	std::string::const_iterator it = s.begin();
-	bool first = true;
+
+	// always runs for the first char
+	if (*it != '+' && *it != '-' && !(std::isdigit(*it)) )
+		return false;
+
+	it++;
 	while (it != s.end())
 	{
-		if (first)		// always runs at the first time
-		{
-			if (*it != '+' && *it != '-' && !(std::isdigit(*it)) )
-				return false;
+		if ( !std::isdigit(*it) )
+			return false;
 
-			first = false;
-		}
-		else 
-		{
-			if ( !std::isdigit(*it) )
-				return false;
-		}
 		it++;
 	}
-	return !s.empty();
+
+	return true;
 }
 
 /**
@@ -157,7 +154,7 @@ void uc_score()
 		case 4:			
 			if (m_cmd_parse[v_exstr[1]] == SC_ADD)
 			{
-				sc_add_sc();	// "score add (<name> | <rank>) <number>"
+				sc_add_scn();	// "score add (<name> | <rank>) <number>"
 				return;
 			}
 			[[fallthrough]];	// C++17 
@@ -169,12 +166,10 @@ void uc_score()
 /**
  * @brief Subcommand "add" of "score" command
  *  "score add (<name> | <rank>)"
- *  "score add (<name> | <rank>) <number>"
  */
 void sc_add_sc()
 {
 	debug_info();
-//	int num = 1;
 	if (v_exstr.size() == 3)
 	{
 		if ( is_num_only(v_exstr[2]))	// checking rank correctness
@@ -182,19 +177,25 @@ void sc_add_sc()
 		else
 			scb.add_pscore(v_exstr[2]);				// "score add <name>"
 	}
-	else
+}
+
+/**
+ * @brief Subcommand "add" of "score" command
+ *  "score add (<name> | <rank>) <number>"
+ */
+void sc_add_scn()
+{
+	debug_info();
+	if (is_num_gen(v_exstr[3]))	// "score add (<name>|<rank>)<number>"
 	{
-		if (is_num_gen(v_exstr[3]))	// "score add (<name>|<rank>)<number>"
-		{
-			if ( is_num_only(v_exstr[2]))	// checking rank correctness
-				scb.add_pscore(std::stoi(v_exstr[2]), 
-								std::stoi(v_exstr[3]));	// score add <rank>"
-			else					// "score add <name>"
-				scb.add_pscore(v_exstr[2], std::stoi(v_exstr[3]));	
-				
-		} else
-			report_err("Wrong format of number", void());
-	}
+		if ( is_num_only(v_exstr[2]))				// checking rank is num
+			scb.add_pscore(std::stoi(v_exstr[2]), 
+							std::stoi(v_exstr[3]));			  // using rank
+		else					
+			scb.add_pscore(v_exstr[2], std::stoi(v_exstr[3]));// using name
+			
+	} else
+		report_err("Wrong format of number", void());
 }
 
 /**
@@ -216,7 +217,6 @@ void sc_reset()
 			scb.reset_pscore(v_exstr[3]);	// is name
 	}
 }
-
 
 /**
  * @brief Command "player" - modifies a player
@@ -361,14 +361,14 @@ void uc_set()
 	switch(m_cmd_parse[v_exstr[1]])
 	{
 		case UC_SHOW:
-			if (is_num_gen(v_exstr[2]))
+			if (is_num_only(v_exstr[2]))
 			{
 				scb.set_show_max(std::stoi(v_exstr[2]));
 				break;
 			}
-			[[fallthrough]];	// C++17 
+			report_err("Unknown subcommand", void());
 		case SC_MAX:
-			if (is_num_gen(v_exstr[2]))
+			if (is_num_only(v_exstr[2]))
 			{
 				scb.set_max_players(std::stoi(v_exstr[2]));
 				break;
@@ -491,14 +491,8 @@ int run_scb(int argc, char *argv[])
 		split_str(user_in);					// vector of strings
 		switch(m_cmd_parse[v_exstr[0]])		// with only main commands
 		{
-			case UC_PRINT:		
+			case UC_PRINT: case UC_SCOREBOARD: case UC_SHOW:
 				uc_print();	
-				break;
-			case UC_SCOREBOARD:
-				uc_print();
-				break;
-			case UC_SHOW:
-				uc_print();
 				break;
 			case UC_SCORE:
 				uc_score();

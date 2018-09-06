@@ -92,6 +92,7 @@ void uc_load();
 
 // user subcommands
 void sc_add_sc();
+void sc_add_scn();
 void sc_reset();
 void sc_add_p();
 void sc_remove();
