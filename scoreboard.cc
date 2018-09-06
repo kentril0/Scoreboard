@@ -69,7 +69,7 @@ void Scoreboard::set_max_players(int num)
 	if (num < 0 || num > USHRT_MAX)	// hard limit 
 		report_err("Incorrect number of maximum players", void());
 
-	int i = players.size()-1;
+	int i = players.size()-1;	// index
 	while (i > num)			// remove players above limit
 	{
 		rm_player(i);		// TODO range delete
@@ -392,27 +392,13 @@ void Scoreboard::sort_scb()
 {
 	debug_info();
 
-	// lambda function object for comparing two pairs, 
-	//	first values then keys if match
-/*	Comparator compFunctor =	
-		[](std::pair<char *, int> const &a, std::pair<char *, int> const &b)
-		{
-			return a.second != b.second ? a.second > b.second :
-											a.first < b.first;
-		};
-
-*/
-//	pl_sort (players.begin(), players.end(), compFunctor);
-	// "shallow" copy
-//	std::transform(players.begin(), players.end(), std::inserter(pl_sort, 
-//		pl_sort.begin()), compFunctor);
-
 	pl_sort.clear();
 
+	// copying to the vector from map
 	std::copy(players.begin(), players.end(),
 		std::back_inserter<std::vector<std::pair<std::string,
 													int>>>(pl_sort));
-
+	// sorting the vector based on my rule
 	std::sort(pl_sort.begin(), pl_sort.end(), 
 				[](std::pair<std::string, int> const &a, 
 					std::pair<std::string, int> const &b)
@@ -420,6 +406,4 @@ void Scoreboard::sort_scb()
 						return a.second != b.second ? a.second > b.second :
 											a.first < b.first;
 					});
-	
-	
 }
