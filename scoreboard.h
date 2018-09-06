@@ -72,7 +72,7 @@ typedef std::map<std::string, int>::iterator Pl_it;
 
 /**
  * @brief TODO DEPRECATED NOW TODO
- */
+ *
 class Player
 {
 	std::string name;	///< Player name, by default "Player_%"
@@ -94,30 +94,32 @@ public:
 
 	~Player() {}					// destructor
 };
+*/
 
-/**
+/** TODO DEPRECATED NOW TODO
  * @brief Sets a player name
  * @param name Desired new name
- */
+ *
 inline void Player::set_name(const std::string &name)
 {
 	this->name = name;
 }
+*/
 
-/**
+/** TODO DEPRECATED NOW TODO
  * @brief Provides access to the name of player
  * @return Const pointer to name of player
- */
+ *
 inline std::string const *Player::get_name()
 {
 	return &name;
 }
+*/
 
-
-/**
+/** TODO DEPRECATED NOW TODO
  * @brief Sets score of a player
  * @param num New score of player
- */
+ *
 inline void Player::set_score(int num)
 {
 	if (num > MAX_SCORE)		
@@ -127,19 +129,21 @@ inline void Player::set_score(int num)
 
 	score = num;
 }
+*/
 
-/**
+/** TODO DEPRECATED NOW TODO
  * @brief Get player score
  * @return player score
- */
+ *
 inline int Player::get_score()
 {
 	return score;
 }
+*/
 
-/**
+/** TODO DEPRECATED NOW TODO
  * @brief Increments player score by one
- */
+ *
 inline void Player::inc_score()
 {
 	if (score < MAX_SCORE)
@@ -147,10 +151,11 @@ inline void Player::inc_score()
 	else
 		report_war("Maximum score reached");
 }
+*/
 
-/**
+/** TODO DEPRECATED NOW TODO
  * @brief Decrements player score by one
- */
+ *
 inline void Player::dec_score()
 {
 	if (score > MIN_SCORE)
@@ -158,6 +163,7 @@ inline void Player::dec_score()
 	else
 		report_war("Minimum score reached");
 }
+*/
 
 // ----------------------------------------------------------------------
 
