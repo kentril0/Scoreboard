@@ -57,7 +57,7 @@ Options:
  are added only up to the current available limit.  
 
 ## Scoreboard Commands
-
+```
 print | scoreboard | show | score	- shows current score table  
 player 	-> add [<name>] [<score>]  
 		-> remove ( all | (<name> | <rank>) )  
@@ -76,7 +76,7 @@ load	-> history <path_to_history_file>
 		-> players <path_to_player_name_file>  
 help	- shows this message  
 exit	- shuts down the scoreboard app  
-
+```
 
 ## Limits
 1. Number of players and limit
