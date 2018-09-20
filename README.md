@@ -5,12 +5,14 @@ player names and player scores - a scoreboard.
 Used for LAN parties or any competitions.
 Just a fun little application, one of my first C++ apps.  
 
-##Example of output
-  
+## Example of output 
+
+```
   ________________________________________________________________________  
  | RANK   | PLAYER NAME                                          | SCORE  |  
   ------------------------------------------------------------------------  
- | 1.     | Valmir                                               | 50     |   ------------------------------------------------------------------------
+ | 1.     | Valmir                                               | 50     |   
+  ------------------------------------------------------------------------
  | 2.     | Shade                                                | 26     |
   ------------------------------------------------------------------------
  | 3.     | Kentril                                              | 25     |
@@ -18,6 +20,7 @@ Just a fun little application, one of my first C++ apps.
  | 4.     | Wormik                                               | 23     |
   ------------------------------------------------------------------------
 
+```
 
 ## Status
  **File manipulation is not implemented yet.**  
@@ -34,6 +37,7 @@ Extract into a dir and "install" using make command
 
 Shown when "./scoreboard --help | -h" used:  
 
+```
 ./scoreboard [-p P] [-s S] [-m M] [-sf file] [-hf histFile] [-h] [--help]  
 Options:  
  -p P		Initializes scoreboard with P players, where P is the number of   
@@ -45,6 +49,7 @@ Options:
  -hf file	Sets a path to a history file with printed scoreboard, data  
  			will load into the current scoreboard.  
  -h|--help	Shows this message.  
+```
 
 ### Notes:
  If both arguments "-p" and "-hf" are used and are valid, first players  
@@ -52,7 +57,7 @@ Options:
  are added only up to the current available limit.  
 
 ## Scoreboard Commands
-
+```
 print | scoreboard | show | score	- shows current score table  
 player 	-> add [<name>] [<score>]  
 		-> remove ( all | (<name> | <rank>) )  
@@ -71,7 +76,7 @@ load	-> history <path_to_history_file>
 		-> players <path_to_player_name_file>  
 help	- shows this message  
 exit	- shuts down the scoreboard app  
-
+```
 
 ## Limits
 1. Number of players and limit
