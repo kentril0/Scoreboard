@@ -489,6 +489,9 @@ int run_scb(int argc, char *argv[])
 	while( std::getline (std::cin, user_in) )
 	{
 		split_str(user_in);					// vector of strings
+		if (!v_exstr.size())				// only whitespace as an input
+			continue;
+
 		switch(m_cmd_parse[v_exstr[0]])		// with only main commands
 		{
 			case UC_PRINT: case UC_SCOREBOARD: case UC_SHOW:
